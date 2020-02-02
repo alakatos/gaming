@@ -42,11 +42,11 @@ public class GameController {
 		maintainPressedKeys(keyPressed, DirectionKey.RIGHT);
 	};
 	
-	public Map<Character, KeyAction> createDefaultMapping() {
+	public final Map<Character, KeyAction> createDefaultMapping() {
 		return createCustom5Mapping('w', 'a', 's', 'd', ' ');
 	}
 	
-	public Map<Character, KeyAction> createCustom5Mapping(char up, char left, char down, char right, char fire) {
+	public final Map<Character, KeyAction> createCustom5Mapping(char up, char left, char down, char right, char fire) {
 		return new KeyBindingBuilder().
 				bindAction(this::goUp).to(up).
 				bindAction(this::goLeft).to(left).
@@ -113,6 +113,7 @@ public class GameController {
 		}
 		this.player = player;
 		gameKeyListener = new GameKeyListener();
+		setKeyMapping(createDefaultMapping());
 	}
 
 	public void setKeyMapping(Map<Character, KeyAction> keyMapping) {

@@ -27,9 +27,6 @@ public class GameControllerTest {
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 		gc = new GameController(playerSpy);
-		Map<Character, KeyAction> mapping = gc.createDefaultMapping();
-		mapping.put(' ', fireActionMock);
-		gc.setKeyMapping(mapping);
 		keyboardEmulator = new KeyboardEmulator(gc.getKeyListener());
 	}
 	
@@ -38,7 +35,7 @@ public class GameControllerTest {
 		keyboardEmulator.pressKey('w');
 		keyboardEmulator.pressKey(' ');
 		verify(playerSpy).directionChanged(any(Direction.class), any(Direction.class));
-		verify(fireActionMock).accept(true);
+		verify(playerSpy).firePressed();
 	}
 
 	@Test

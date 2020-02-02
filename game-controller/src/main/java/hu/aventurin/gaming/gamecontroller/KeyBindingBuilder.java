@@ -6,8 +6,7 @@ import java.util.Objects;
 
 public class KeyBindingBuilder {
 	
-	private Map<Character, KeyAction> mapping = new HashMap<>(); 
-	private GameController gc;
+	private final Map<Character, KeyAction> mapping; 
 	
 	class CharMapper {
 		private KeyAction func;
@@ -23,6 +22,11 @@ public class KeyBindingBuilder {
 	}
 	
 	public KeyBindingBuilder() {
+		this(new HashMap<>());
+	}
+
+	public KeyBindingBuilder(Map<Character, KeyAction> existingMapping) {
+		this.mapping = existingMapping;
 	}
 
 	public CharMapper bindAction(KeyAction  task) {

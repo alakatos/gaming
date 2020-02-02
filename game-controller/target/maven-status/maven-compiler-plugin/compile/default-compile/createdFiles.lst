@@ -1,0 +1,9 @@
+hu\aventurin\gaming\gamecontroller\GameController.class
+hu\aventurin\gaming\gamecontroller\Direction.class
+hu\aventurin\gaming\gamecontroller\GameControllerListener.class
+hu\aventurin\gaming\gamecontroller\DirectionKey.class
+hu\aventurin\gaming\gamecontroller\GameControllerSetupBuilder$CharMapper.class
+hu\aventurin\gaming\gamecontroller\GameController$GameKeyListener.class
+hu\aventurin\gaming\gamecontroller\GameControllerSetupBuilder.class
+hu\aventurin\gaming\gamecontroller\Direction$1.class
+hu\aventurin\gaming\gamecontroller\KeyAction.class

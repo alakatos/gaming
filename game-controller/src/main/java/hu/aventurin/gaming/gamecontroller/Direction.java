@@ -22,7 +22,7 @@ public enum Direction {
 	}
 
 	public boolean isRight() {
-		return angle > 270 || (angle < 90 && angle > 0);
+		return angle > 270 || (angle < 90 && angle >= 0);
 	}
 	
 	public int getAngle() {

@@ -2,11 +2,7 @@ package hu.aventurin.gaming.gamecontroller;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,7 +10,9 @@ public class GameController {
 
 	
 	private Set<DirectionKey> pressedDirectionKeys = new HashSet<>();
-	private Map<Character, DirectionKey> controlCharMap = new HashMap<>(); 
+	private KeyListener gameKeyListener;
+	private GameControllerListener player;
+	private Map<Character, KeyAction> keyMapping;
 	
 	public class GameKeyListener implements KeyListener {
 
@@ -31,26 +29,67 @@ public class GameController {
 		}
 	}
 	
+	private void goLeft(Boolean keyPressed) { 
+		maintainPressedKeys(keyPressed, DirectionKey.LEFT);
+	};
+	private void goUp(Boolean keyPressed) { 
+		maintainPressedKeys(keyPressed, DirectionKey.UP);
+	};
+	private void goDown(Boolean keyPressed) { 
+		maintainPressedKeys(keyPressed, DirectionKey.DOWN);
+	};
+	private void goRight(Boolean keyPressed) { 
+		maintainPressedKeys(keyPressed, DirectionKey.RIGHT);
+	};
+	
+	public Map<Character, KeyAction> createDefaultMapping() {
+		return createCustom5Mapping('w', 'a', 's', 'd', ' ');
+	}
+	
+	public Map<Character, KeyAction> createCustom5Mapping(char up, char left, char down, char right, char fire) {
+		return new KeyBindingBuilder().
+				bindAction(this::goUp).to(up).
+				bindAction(this::goLeft).to(left).
+				bindAction(this::goDown).to(down).
+				bindAction(this::goRight).to(right).
+				bindAction(this::callFirePressed).to(fire).
+				build();
+	}
+	
+	private void callFirePressed(Boolean keyPressed) {
+		if (keyPressed) {
+			player.firePressed();
+		}
+	}
+
+	
+	private void maintainPressedKeys(boolean keyPressed, DirectionKey directionKey) {
+		if (keyPressed) {
+			pressedDirectionKeys.add(directionKey);
+		} else {
+		    pressedDirectionKeys.remove(directionKey);
+		}
+	}
+	
 	private void handleKeyEvent(KeyEvent e) {
+		if (keyMapping == null || keyMapping.isEmpty()) {
+			return;
+			//TODO log
+		}
 		Character chCapital = Character.toUpperCase(e.getKeyChar());
-		DirectionKey dirKey = controlCharMap.get(chCapital);
+		KeyAction action = keyMapping.get(chCapital);
+		boolean keyPressed = e.getID() == KeyEvent.KEY_PRESSED; 
+		if (action != null) {
+			action.accept(keyPressed);
+		}
+		
 		Direction oldDirection = currentDirection, 
 				newDirection = currentDirection;
-		boolean keyPressed = e.getID() == KeyEvent.KEY_PRESSED; 
-		if (dirKey != null) {
-			if (keyPressed) {
-				pressedDirectionKeys.add(dirKey);
-			} else { //KEY_RELEASED
-				pressedDirectionKeys.remove(dirKey);
-			}
-			newDirection = createDirectionFromPressedKeys();
-		}
+		newDirection = createDirectionFromPressedKeys();
+
 		if (newDirection != oldDirection) {
 			currentDirection = newDirection;
 			player.directionChanged(oldDirection, newDirection);
-		}
-		if (chCapital == chFire && keyPressed) {
-			player.firePressed();
 		}
 		
 	}
@@ -66,35 +105,20 @@ public class GameController {
 		DirectionKey horizontalKey = DirectionKey.fromStatusValue(keyDownStatus, DirectionKey.HORIZONTAL_MASK);
 		return Direction.fromDirectionKeys(horizontalKey, verticalKey);
 	}
-
-	private KeyListener gameKeyListener;
-	private char chFire;
-	private GameControllerListener player;
-	
 	
 	/** Expects the directions in UP-LEFT-DOWN-RIGHT (e.g. WASD) order. 5th param is the fire key.*/
-	public GameController(GameControllerListener player, char... keyMapping) {
-		if (keyMapping.length < 5) {
-			throw new IllegalArgumentException("At least 5 characters expected");
-		}
+	public GameController(GameControllerListener player) {
 		if (player == null) {
 			throw new IllegalArgumentException("GameControllerListener must not be null");
 		}
 		this.player = player;
-		List<Character> charList = new ArrayList<>();
-		for (char ch : keyMapping) {
-			charList.add(Character.toUpperCase(ch));
-		}
-		
 		gameKeyListener = new GameKeyListener();
-		Iterator<Character> iter = charList.iterator();
-		controlCharMap.put(iter.next(), DirectionKey.UP);
-		controlCharMap.put(iter.next(), DirectionKey.LEFT);
-		controlCharMap.put(iter.next(), DirectionKey.DOWN);
-		controlCharMap.put(iter.next(), DirectionKey.RIGHT);
-		chFire = iter.next();
 	}
 
+	public void setKeyMapping(Map<Character, KeyAction> keyMapping) {
+		this.keyMapping = keyMapping;
+	}
+	
 	public KeyListener getKeyListener() {
 		return gameKeyListener;
 	}

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
+import java.util.Map;
 
 import static org.mockito.Mockito.times;
 import org.junit.Before;
@@ -17,22 +18,27 @@ public class GameControllerTest {
 
 	@Mock
 	GameControllerListener playerSpy;
+	@Mock
+	KeyAction fireActionMock;
 	GameController gc;
 	KeyboardEmulator keyboardEmulator;
 	
 	@Before
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
-		gc = new GameController(playerSpy, 'w', 'a', 's', 'd', ' ');
+		gc = new GameController(playerSpy);
+		Map<Character, KeyAction> mapping = gc.createDefaultMapping();
+		mapping.put(' ', fireActionMock);
+		gc.setKeyMapping(mapping);
 		keyboardEmulator = new KeyboardEmulator(gc.getKeyListener());
 	}
 	
 	@Test
 	public void testGameControllerNotifiesPlayerOnSateChange() {
-		keyboardEmulator.pressKey(' ');
 		keyboardEmulator.pressKey('w');
-		verify(playerSpy).firePressed();
+		keyboardEmulator.pressKey(' ');
 		verify(playerSpy).directionChanged(any(Direction.class), any(Direction.class));
+		verify(fireActionMock).accept(true);
 	}
 
 	@Test

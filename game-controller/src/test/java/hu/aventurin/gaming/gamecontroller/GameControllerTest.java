@@ -17,7 +17,7 @@ import org.mockito.MockitoAnnotations;
 public class GameControllerTest {
 
 	@Mock
-	GameControllerListener playerSpy;
+	GameControllerListener playerSpy;O
 	@Mock
 	KeyAction fireActionMock;
 	GameController gc;

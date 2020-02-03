@@ -1,13 +1,12 @@
 package hu.aventurin.gaming.gamecontroller;
-import static org.mockito.ArgumentMatchers.any;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
-import java.util.Map;
 
-import static org.mockito.Mockito.times;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -17,7 +16,7 @@ import org.mockito.MockitoAnnotations;
 public class GameControllerTest {
 
 	@Mock
-	GameControllerListener playerSpy;O
+	GameControllerListener playerSpy;
 	@Mock
 	KeyAction fireActionMock;
 	GameController gc;

@@ -1,25 +1,30 @@
 package hu.zsomi.games.followgame;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.Rectangle;
+
+import hu.zsomi.games.geom.Location2D;
 
 abstract class Figure  {
 
-	Point position = new Point();
-	int size = 10;
-	Color color;
-	int speed;
+	private Location2D position;
+	private int size = 10;
+	private Color color;
+	private double speed;
 	
-	public Figure(Point position, int size, Color color, int speed) {
+	public Figure(Location2D position, int size, Color color, double speed) {
 		this.position = position;
 		this.size = size;
 		this.color = color;
 		this.speed = speed;
 	}
 
-	void setSpeed(int speed) {
+	public void setSpeed(double speed) {
 		this.speed = speed;
+	}
+	
+	public double getSpeed() {
+		return speed;
 	}
 	
 	void setColor(Color color) {
@@ -30,11 +35,6 @@ abstract class Figure  {
 		return color;
 	}
 
-	Figure(Point position, int size, Color color) {
-		this.position = position;
-		this.size = size;
-		this.color = color;
-	}
 
 	public void setSize(int size) {
 		this.size = size;
@@ -44,24 +44,25 @@ abstract class Figure  {
 		return size;
 	}
 	
-	public Point getPosition() {
+	public Location2D getPosition() {
 		return position;
 	}
 	
-	public void setPosition(Point pt) {
-		this.position = new Point(pt.x, pt.y);
+	public void setPosition(Location2D pt) {
+		this.position = pt;
 	}
 
-	public void setPosition(int x, int y) {
-		this.position = new Point(x,y);
+	public void setPosition(double x, double y) {
+		setPosition(new Location2D(x,y));
 	}
 	
 	public Rectangle getRectangle() {
-		return new Rectangle(position.x-size/2, position.y-size/2, size, size);
+		return new Rectangle(position.getXInt()-size/2, position.getYInt()-size/2, size, size);
 	}
 
 	abstract void draw(Graphics g);
-	abstract void drawShadow(Graphics g);
+	
+	public abstract void doIteration();
 
 
 }

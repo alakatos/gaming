@@ -46,7 +46,11 @@ public class Location2D {
 	public Location2D move(Point pt) {
 		return move((double)pt.x, (double)pt.y);
 	}
-	
+
+	public Location2D move(Location2D loc) {
+		return move(loc.getX(), loc.getY());
+	}
+
 	public Point asPoint() {
 		return new Point((int)x,(int)y);
 	}

@@ -7,9 +7,17 @@ public class Vector2D {
 	private Location2D targetPoint;
 
 	public Vector2D(Point to) {
-		this(0, 0, to.x, to.y);
+		this(new Location2D(to));
 	}
 
+	public Vector2D(Location2D to) {
+		this(0, 0, to.getX(), to.getY());
+	}
+
+	public Vector2D(Location2D from, Location2D to) {
+		this(from.getX(), from.getY(), to.getX(), to.getY());
+	}
+	
 	public Vector2D(Point from, Point to) {
 		this(from.x, from.y, to.x, to.y);
 	}
@@ -74,16 +82,32 @@ public class Vector2D {
 	}
 	
 	public Vector2D move(Point pt) {
-		return move(pt.x, pt.y);
+		return move(new Location2D(pt));
+	}
+
+	public Vector2D move(Location2D loc) {
+		return move(loc.getX(), loc.getY());
 	}
 	
 	public Vector2D move(double xOffs, double yOffs) {
-		return new Vector2D(targetPoint.move(xOffs, yOffs).asPoint());
+		return new Vector2D(targetPoint.move(xOffs, yOffs));
 	}
 	public Point asPoint() {
 		return targetPoint.asPoint();
 	}
 	
+
+	public Vector2D add(Vector2D vec2add) {
+		return new Vector2D(targetPoint.move(vec2add.getTargetPoint()));
+	}
+
+	public Vector2D mirrorToAxisX() {
+		return new Vector2D(targetPoint.getX(), targetPoint.getY()*-1);
+	}
+
+	public Vector2D mirrorToAxisY() {
+		return new Vector2D(targetPoint.getX()*-1, targetPoint.getY());
+	}
 
 	@Override
 	public boolean equals(Object obj) {

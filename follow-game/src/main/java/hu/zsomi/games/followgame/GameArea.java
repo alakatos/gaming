@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Polygon;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,11 +21,14 @@ import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import hu.aventurin.gaming.gamecontroller.GameController;
+import hu.zsomi.games.geom.Location2D;
 
-class GameArea extends JComponent {
+class GameArea extends JComponent implements DebrisDisposedListener {
 
 	Player player;
 	List<Enemy> enemies;
+	List<Bullet> bullets = new ArrayList<>();
+	List<Debris> debris;
 	Timer uiUpdateTimer;
 	GameController gameController;
 	long startTime;
@@ -36,12 +38,12 @@ class GameArea extends JComponent {
 	GameArea() throws IOException {
 		backgroundImage = ImageIO.read(getClass().getResourceAsStream("/Landscape_cartoon.png"));
 		startTime = System.currentTimeMillis();
-		player = new Player(new Point(500, 500), 60, new Color(0xD0FFFF00, true), 4 ,this);
-		player.setMousePosition(new Point(0,0));
+		player = new Player(new Location2D(500, 500), 60, new Color(0xD0FFFF00, true), 4 ,this);
+		player.setMousePosition(new Point());
 		enemies = new ArrayList<>(Arrays.asList(
-				new Enemy(new Point(560, 100), 70, Color.BLUE, 2),
-				new Enemy(new Point(560, 200), 50, Color.GREEN, 1),
-				new Enemy(new Point(560, 300), 60, Color.ORANGE, 1)));
+				new Enemy(new Location2D(560, 100), 70, Color.BLUE, 2),
+				new Enemy(new Location2D(560, 200), 50, Color.GREEN, 1),
+				new Enemy(new Location2D(560, 300), 60, Color.ORANGE, 1.5)));
 		setupTimer();
 		gameController = new GameController(player);
 		
@@ -57,21 +59,28 @@ class GameArea extends JComponent {
 			}
 		});
 
+
 		addKeyListener(gameController.getKeyListener());
 		
 	}
 
+	void addBullet(Bullet bullet) {
+		if (bullet != null) {
+			bullets.add(bullet);
+		}
+	}
+	
 	void addNewEnemy() {
 		// TODO adj hozzá egy új ellenséget az ellenségek listájához
 		//ha lehet, random helyre, random sebességgel
 		
 		//dplayer.getPosition();
-		Enemy e = new Enemy(new Point(160, 100), 70, Color.BLUE, 2);
+		Enemy e = new Enemy(new Location2D(160, 100), 70, Color.BLUE, 2);
 		enemies.add(e);
 	}
 
 	private void setupTimer() {
-		uiUpdateTimer = new Timer(10, new ActionListener() {
+		uiUpdateTimer = new Timer(15, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
@@ -79,10 +88,12 @@ class GameArea extends JComponent {
 				for (Enemy enemy : enemies) {
 					enemy.setTargetPoint(player.getPosition());
 					if (System.currentTimeMillis() - startTime > 1000) {
-						enemy.followTarget();
+						enemy.doIteration();
 					}
 
 				}
+
+				moveBullets();
 
 				repaint();
 
@@ -95,9 +106,21 @@ class GameArea extends JComponent {
 					}
 				}
 			}
+
 		});
 
 		uiUpdateTimer.start();
+	}
+
+	private void moveBullets() {
+		List<Bullet> bulletsToRemove = new ArrayList<>();
+		for (Bullet bullet : bullets) {
+			bullet.doIteration();
+			if (!getVisibleRect().contains(bullet.getPosition().asPoint())) {
+				bulletsToRemove.add(bullet);
+			}
+		}
+		bullets.removeAll(bulletsToRemove);
 	}
 
 	void setAntiAliasing(Graphics2D g) {
@@ -115,8 +138,16 @@ class GameArea extends JComponent {
 		for (Enemy enemy : enemies) {
 			enemy.draw(g);
 		}
+		for (Bullet bullet: bullets) {
+			bullet.draw(g);
+		}
 		player.draw(g);
 
+	}
+
+	@Override
+	public void debrisDisposed(Debris aDebris) {
+		debris.remove(aDebris);
 	}
 
 }

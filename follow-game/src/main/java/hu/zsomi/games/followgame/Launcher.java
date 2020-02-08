@@ -13,7 +13,7 @@ class Launcher {
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		final GameArea gameArea = new GameArea();
-		gameArea.setPreferredSize(new Dimension(1920, 1000));
+		gameArea.setPreferredSize(new Dimension(1200, 600));
 
 		window.getContentPane().add(gameArea, BorderLayout.CENTER);
 		gameArea.setFocusable(true);

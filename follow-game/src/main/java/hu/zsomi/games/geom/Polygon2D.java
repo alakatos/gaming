@@ -41,6 +41,10 @@ public class Polygon2D {
 		return (move(pt.x, pt.y));
 	}
 	
+	public Polygon2D move(Location2D loc) {
+		return (move(loc.getX(), loc.getY()));
+	}
+
 	public Polygon2D move(double xOffs, double yOffs) {
 		List<Vector2D> newPolyPoints = new ArrayList<>();
 		for (Vector2D pt : points) {

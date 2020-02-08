@@ -4,7 +4,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-class Figure  {
+abstract class Figure  {
 
 	Point position = new Point();
 	int size = 10;
@@ -25,6 +25,10 @@ class Figure  {
 	void setColor(Color color) {
 		this.color = color;
 	}
+	
+	protected Color getColor() {
+		return color;
+	}
 
 	Figure(Point position, int size, Color color) {
 		this.position = position;
@@ -36,13 +40,6 @@ class Figure  {
 		this.size = size;
 	}
 	
-	void draw(Graphics g) {
-		Color savedColor = g.getColor();
-		g.setColor(color);
-		g.fillRect(position.x, position.y, size, size);
-		g.setColor(savedColor);
-	}
-
 	public int getSize() {
 		return size;
 	}
@@ -51,13 +48,20 @@ class Figure  {
 		return position;
 	}
 	
+	public void setPosition(Point pt) {
+		this.position = new Point(pt.x, pt.y);
+	}
+
 	public void setPosition(int x, int y) {
 		this.position = new Point(x,y);
 	}
 	
 	public Rectangle getRectangle() {
-		return new Rectangle(position.x, position.y, size, size);
+		return new Rectangle(position.x-size/2, position.y-size/2, size, size);
 	}
+
+	abstract void draw(Graphics g);
+	abstract void drawShadow(Graphics g);
 
 
 }

@@ -2,15 +2,20 @@ package hu.zsomi.games.followgame;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
@@ -24,20 +29,32 @@ class GameArea extends JComponent {
 	Timer uiUpdateTimer;
 	GameController gameController;
 	long startTime;
-	GameArea() {
+	
+	Image backgroundImage;
+	 
+	GameArea() throws IOException {
+		backgroundImage = ImageIO.read(getClass().getResourceAsStream("/Landscape_cartoon.png"));
 		startTime = System.currentTimeMillis();
-		player = new Player(new Point(500, 500), 60, Color.GRAY, 20 ,this);
+		player = new Player(new Point(500, 500), 60, new Color(0xD0FFFF00, true), 4 ,this);
+		player.setMousePosition(new Point(0,0));
 		enemies = new ArrayList<>(Arrays.asList(
-				new Enemy(new Point(160, 100), 70, Color.BLUE, 2),
-				new Enemy(new Point(160, 100), 50, Color.GREEN, 1),
-				new Enemy(new Point(160, 100), 60, Color.ORANGE, 1)));
+				new Enemy(new Point(560, 100), 70, Color.BLUE, 2),
+				new Enemy(new Point(560, 200), 50, Color.GREEN, 1),
+				new Enemy(new Point(560, 300), 60, Color.ORANGE, 1)));
 		setupTimer();
 		gameController = new GameController(player);
+		
 
 		addEventListeners();
 	}
 
 	private void addEventListeners() {
+		
+		addMouseMotionListener(new MouseMotionAdapter() {
+			public void mouseMoved(MouseEvent e) {
+				player.setMousePosition(e.getPoint());
+			}
+		});
 
 		addKeyListener(gameController.getKeyListener());
 		
@@ -47,9 +64,8 @@ class GameArea extends JComponent {
 		// TODO adj hozzá egy új ellenséget az ellenségek listájához
 		//ha lehet, random helyre, random sebességgel
 		
-		int randomNumberBetween50and150 = (int)(50 + Math.random()*100);
 		//dplayer.getPosition();
-		Enemy e = new Enemy(new Point(160, 100), 70, Color.BLUE, 3);
+		Enemy e = new Enemy(new Point(160, 100), 70, Color.BLUE, 2);
 		enemies.add(e);
 	}
 
@@ -66,15 +82,17 @@ class GameArea extends JComponent {
 						enemy.followTarget();
 					}
 
+				}
+
+				repaint();
+
+				for (Enemy enemy : enemies) {
 					if (enemy.getRectangle().intersects(playerRectangle)) {
 						JOptionPane.showMessageDialog(GameArea.this, "The enemy hit you!", "Game Over!",
 								JOptionPane.INFORMATION_MESSAGE);
-						System.exit(0);
+						uiUpdateTimer.stop();
 					}
 				}
-
-				// square2.setSize(square2.getSize()+1);
-				repaint();
 			}
 		});
 
@@ -87,6 +105,7 @@ class GameArea extends JComponent {
 
 	@Override
 	protected void paintComponent(Graphics g) {
+		g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
 		if (g instanceof Graphics2D) {
 			setAntiAliasing((Graphics2D) g);
 		}

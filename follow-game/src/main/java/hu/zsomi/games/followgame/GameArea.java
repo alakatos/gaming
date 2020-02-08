@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
@@ -75,7 +76,6 @@ class GameArea extends JComponent {
 			public void actionPerformed(ActionEvent e) {
 
 				player.goToDirection();
-				Rectangle playerRectangle = player.getRectangle();
 				for (Enemy enemy : enemies) {
 					enemy.setTargetPoint(player.getPosition());
 					if (System.currentTimeMillis() - startTime > 1000) {
@@ -86,8 +86,9 @@ class GameArea extends JComponent {
 
 				repaint();
 
+				Polygon playerPolygon = player.getPolygon().asAwtPolygon();
 				for (Enemy enemy : enemies) {
-					if (enemy.getRectangle().intersects(playerRectangle)) {
+					if (playerPolygon.intersects(enemy.getRectangle())) {
 						JOptionPane.showMessageDialog(GameArea.this, "The enemy hit you!", "Game Over!",
 								JOptionPane.INFORMATION_MESSAGE);
 						uiUpdateTimer.stop();

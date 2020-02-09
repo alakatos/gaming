@@ -2,7 +2,6 @@ package hu.zsomi.games.followgame.controller;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
@@ -20,8 +19,9 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
-import hu.aventurin.gaming.gamecontroller.GameController;
-import hu.aventurin.gaming.gamecontroller.KeyBindingBuilder;
+import hu.aventurin.gaming.gamepad.GamePad;
+import hu.aventurin.gaming.gamepad.KeyBindingBuilder;
+import hu.zsomi.games.followgame.GameController;
 import hu.zsomi.games.followgame.Renderer;
 import hu.zsomi.games.followgame.model.Bullet;
 import hu.zsomi.games.followgame.model.Debris;
@@ -29,17 +29,16 @@ import hu.zsomi.games.followgame.model.Enemy;
 import hu.zsomi.games.followgame.model.Player;
 import hu.zsomi.gaming.geometry.Location2D;
 
-public class GameArea implements GameCtrl {
+public class GameArea implements GameController {
 
-	Player player;
-	List<Enemy> enemies;
-	List<Bullet> bullets = new ArrayList<>();
-	List<Debris> debris = new ArrayList<>();;
-	Timer uiUpdateTimer;
-	GameController gameController;
-	long startTime;
+	private Player player;
+	private List<Enemy> enemies;
+	private List<Bullet> bullets = new ArrayList<>();
+	private List<Debris> debris = new ArrayList<>();
+	private Timer uiUpdateTimer;
+	private GamePad gamePad;
+	private long startTime;
 	
-	Image backgroundImage;
 	private JComponent container;
 	 
 	public GameArea(JComponent container) throws IOException {
@@ -52,10 +51,10 @@ public class GameArea implements GameCtrl {
 				new Enemy(new Location2D(560, 200), 50, Color.GREEN, 1),
 				new Enemy(new Location2D(560, 300), 60, Color.ORANGE, 1.5)));
 		setupTimer();
-		gameController = new GameController(player);
-		KeyBindingBuilder kbBuilder = new KeyBindingBuilder(gameController.getKeyMapping());
+		gamePad = new GamePad(player, 1);
+		KeyBindingBuilder kbBuilder = new KeyBindingBuilder(gamePad.createDefaultMapping());
 		kbBuilder.bindAction(this::spawnEnemy).to('E');
-		gameController.setKeyMapping(kbBuilder.build());
+		gamePad.setKeyMapping(kbBuilder.build());
 
 		addEventListeners();
 	}
@@ -69,7 +68,7 @@ public class GameArea implements GameCtrl {
 		});
 
 
-		container.addKeyListener(gameController.getKeyListener());
+		container.addKeyListener(gamePad.getKeyListener());
 		
 	}
 

@@ -21,7 +21,7 @@
 		</dependency>
 		<dependency>
 			<groupId>hu.zsomi.gaming</groupId>
-			<artifactId>game-controller</artifactId>
+			<artifactId>gamepad</artifactId>
 			<version>${parent.version}</version>
 		</dependency>
 		<dependency>

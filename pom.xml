@@ -10,7 +10,7 @@
 
 	<modules>
 		<module>geometry</module>
-		<module>game-controller</module>
+		<module>gamepad</module>
 		<module>follow-game</module>
 	</modules>
 

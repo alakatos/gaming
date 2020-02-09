@@ -8,21 +8,21 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 
-import hu.aventurin.gaming.gamecontroller.Direction;
-import hu.aventurin.gaming.gamecontroller.GameControllerListener;
+import hu.aventurin.gaming.gamepad.Direction;
+import hu.aventurin.gaming.gamepad.GamePadListener;
+import hu.zsomi.games.followgame.GameController;
 import hu.zsomi.games.followgame.Renderer;
-import hu.zsomi.games.followgame.controller.GameCtrl;
 import hu.zsomi.gaming.geometry.Location2D;
 import hu.zsomi.gaming.geometry.Polygon2D;
 import hu.zsomi.gaming.geometry.Vector2D;
 
-public class Player extends Figure implements GameControllerListener {
+public class Player extends Figure implements GamePadListener {
 
 	private Direction direction = Direction.NONE;
-	private GameCtrl gameCtrl;
+	private GameController gameCtrl;
 	private CrossHair crossHair;
 
-	public Player(Location2D position, int size, Color color, double speed, GameCtrl gameCtrl) {
+	public Player(Location2D position, int size, Color color, double speed, GameController gameCtrl) {
 		super(position, size, color, speed);
 		this.gameCtrl = gameCtrl;
 		crossHair = new CrossHair(position.move(50,50), 40, Color.BLACK);
@@ -42,12 +42,12 @@ public class Player extends Figure implements GameControllerListener {
 	}
 
 	@Override
-	public void directionChanged(Direction oldDirection, Direction newDirection) {
+	public void directionChanged(int gamePadId, Direction oldDirection, Direction newDirection) {
 		this.direction = newDirection;
 	}
 
 	@Override
-	public void firePressed() {
+	public void firePressed(int gamePadId) {
 		gameCtrl.addBullet(shootBullet());
 	}
 

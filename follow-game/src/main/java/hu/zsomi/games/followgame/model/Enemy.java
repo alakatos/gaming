@@ -77,7 +77,7 @@ public class Enemy extends Figure {
 							triangle.move(massCenterPoint.invert()), 
 							getColor(),
 							debrisSpeedVector, 
-							Math.signum(0.5-Math.random())*((0.3-massRatio)*20)));
+							Math.signum(0.5-Math.random())*((0.5-massRatio)*20)));
 		}
 		return debris;
 	}

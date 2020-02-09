@@ -1,11 +1,10 @@
-package hu.zsomi.games.followgame.controller;
+package hu.zsomi.games.followgame;
 
 import java.awt.Rectangle;
 
 import hu.zsomi.games.followgame.model.Bullet;
 
-public interface GameCtrl {
+public interface GameController {
 	void addBullet(Bullet bullet);
-
 	Rectangle getBounds();
 }

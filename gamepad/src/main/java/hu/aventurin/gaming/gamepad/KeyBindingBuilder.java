@@ -1,4 +1,4 @@
-package hu.aventurin.gaming.gamecontroller;
+package hu.aventurin.gaming.gamepad;
 
 import java.util.HashMap;
 import java.util.Map;

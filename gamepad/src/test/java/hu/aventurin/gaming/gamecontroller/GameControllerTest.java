@@ -2,6 +2,7 @@ package hu.aventurin.gaming.gamecontroller;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -13,28 +14,33 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import hu.aventurin.gaming.gamepad.Direction;
+import hu.aventurin.gaming.gamepad.GamePad;
+import hu.aventurin.gaming.gamepad.GamePadListener;
+import hu.aventurin.gaming.gamepad.KeyAction;
+
 public class GameControllerTest {
 
 	@Mock
-	GameControllerListener playerSpy;
+	GamePadListener playerSpy;
 	@Mock
 	KeyAction fireActionMock;
-	GameController gc;
+	GamePad gamePad;
 	KeyboardEmulator keyboardEmulator;
 	
 	@Before
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
-		gc = new GameController(playerSpy);
-		keyboardEmulator = new KeyboardEmulator(gc.getKeyListener());
+		gamePad = new GamePad(playerSpy, 1);
+		keyboardEmulator = new KeyboardEmulator(gamePad.getKeyListener());
 	}
 	
 	@Test
 	public void testGameControllerNotifiesPlayerOnSateChange() {
 		keyboardEmulator.pressKey('w');
 		keyboardEmulator.pressKey(' ');
-		verify(playerSpy).directionChanged(any(Direction.class), any(Direction.class));
-		verify(playerSpy).firePressed();
+		verify(playerSpy).directionChanged(eq(1),any(Direction.class), any(Direction.class));
+		verify(playerSpy).firePressed(1);
 	}
 
 	@Test
@@ -49,7 +55,7 @@ public class GameControllerTest {
 		keyboardEmulator.releaseKey('d');
 		ArgumentCaptor<Direction> oldDirectionCaptor = ArgumentCaptor.forClass(Direction.class);
 		ArgumentCaptor<Direction> newDirectionCaptor = ArgumentCaptor.forClass(Direction.class);
-		verify(playerSpy, times(8)).directionChanged(oldDirectionCaptor.capture(), newDirectionCaptor.capture());
+		verify(playerSpy, times(8)).directionChanged(eq(1), oldDirectionCaptor.capture(), newDirectionCaptor.capture());
 		
 		assertThat(oldDirectionCaptor.getAllValues(), equalTo(Arrays.asList(
 				Direction.NONE,
@@ -83,7 +89,7 @@ public class GameControllerTest {
 		keyboardEmulator.releaseKey('d');
 		keyboardEmulator.releaseKey('w');
 		ArgumentCaptor<Direction> newDirectionCaptor = ArgumentCaptor.forClass(Direction.class);
-		verify(playerSpy, times(6)).directionChanged(any(Direction.class), newDirectionCaptor.capture());
+		verify(playerSpy, times(6)).directionChanged(eq(1), any(Direction.class), newDirectionCaptor.capture());
 		
 		assertThat(newDirectionCaptor.getAllValues(), equalTo(Arrays.asList(
 				Direction.N,

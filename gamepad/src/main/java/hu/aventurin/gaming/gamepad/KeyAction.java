@@ -1,4 +1,4 @@
-package hu.aventurin.gaming.gamecontroller;
+package hu.aventurin.gaming.gamepad;
 
 @FunctionalInterface
 public interface KeyAction  {

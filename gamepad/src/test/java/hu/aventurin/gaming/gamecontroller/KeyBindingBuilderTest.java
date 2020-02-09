@@ -8,6 +8,9 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import hu.aventurin.gaming.gamepad.KeyAction;
+import hu.aventurin.gaming.gamepad.KeyBindingBuilder;
+
 public class KeyBindingBuilderTest {
 	
 

@@ -1,4 +1,4 @@
-package hu.aventurin.gaming.gamecontroller;
+package hu.aventurin.gaming.gamepad;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -7,13 +7,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class GameController {
+public class GamePad {
 
 	
 	private Set<DirectionKey> pressedDirectionKeys = new HashSet<>();
 	private KeyListener gameKeyListener;
-	private GameControllerListener player;
+	private GamePadListener player;
 	private Map<Character, KeyAction> keyMapping;
+	private final int id;
 	
 	public class GameKeyListener implements KeyListener {
 
@@ -59,7 +60,7 @@ public class GameController {
 	
 	private void callFirePressed(Boolean keyPressed) {
 		if (keyPressed) {
-			player.firePressed();
+			player.firePressed(id);
 		}
 	}
 
@@ -90,7 +91,7 @@ public class GameController {
 
 		if (newDirection != oldDirection) {
 			currentDirection = newDirection;
-			player.directionChanged(oldDirection, newDirection);
+			player.directionChanged(id, oldDirection, newDirection);
 		}
 		
 	}
@@ -108,11 +109,12 @@ public class GameController {
 	}
 	
 	/** Expects the directions in UP-LEFT-DOWN-RIGHT (e.g. WASD) order. 5th param is the fire key.*/
-	public GameController(GameControllerListener player) {
+	public GamePad(GamePadListener player, int id) {
 		if (player == null) {
 			throw new IllegalArgumentException("GameControllerListener must not be null");
 		}
 		this.player = player;
+		this.id = id;
 		gameKeyListener = new GameKeyListener();
 		setKeyMapping(createDefaultMapping());
 	}

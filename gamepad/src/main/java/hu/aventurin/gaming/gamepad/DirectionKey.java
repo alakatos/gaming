@@ -1,4 +1,4 @@
-package hu.aventurin.gaming.gamecontroller;
+package hu.aventurin.gaming.gamepad;
 
 enum DirectionKey {
 	UP(3),

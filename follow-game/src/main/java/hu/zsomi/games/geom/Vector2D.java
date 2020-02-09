@@ -14,14 +14,14 @@ public class Vector2D {
 		this(0, 0, to.getX(), to.getY());
 	}
 
+	public Vector2D(Vector2D from, Vector2D to) {
+		this(from.getTargetPoint(), to.getTargetPoint());
+	}
+
 	public Vector2D(Location2D from, Location2D to) {
 		this(from.getX(), from.getY(), to.getX(), to.getY());
 	}
 	
-	public Vector2D(Point from, Point to) {
-		this(from.x, from.y, to.x, to.y);
-	}
-
 	public Vector2D(double x, double y) {
 		setTargetPoint(x, y);
 	}
@@ -92,6 +92,11 @@ public class Vector2D {
 	public Vector2D move(double xOffs, double yOffs) {
 		return new Vector2D(targetPoint.move(xOffs, yOffs));
 	}
+	
+	public Vector2D invert() {
+		return new Vector2D(-1*targetPoint.getX(), -1*targetPoint.getY());
+	}
+
 	public Point asPoint() {
 		return targetPoint.asPoint();
 	}

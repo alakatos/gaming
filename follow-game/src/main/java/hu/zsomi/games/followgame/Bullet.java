@@ -11,13 +11,14 @@ public class Bullet extends Figure {
 
 	private Vector2D speedVector;
 	public Bullet(Location2D position, Location2D targetPosition, int size, double speed) {
-		super(position, size, Color.DARK_GRAY, speed);
+		super(position, size, Color.RED, speed);
 		speedVector = new Vector2D(position, targetPosition).toLength(speed);
 	}
 
 	@Override
 	public void draw(Graphics g) {
 		Rectangle r = getRectangle();
+		g.setColor(Color.RED);
 		g.fillOval(r.x, r.y, r.width, r.height);
 		setColor(Color.BLACK);
 		g.drawOval(r.x, r.y, r.width, r.height);

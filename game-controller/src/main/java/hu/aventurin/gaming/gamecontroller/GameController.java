@@ -2,6 +2,7 @@ package hu.aventurin.gaming.gamecontroller;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -118,6 +119,10 @@ public class GameController {
 
 	public void setKeyMapping(Map<Character, KeyAction> keyMapping) {
 		this.keyMapping = keyMapping;
+	}
+	
+	public Map<Character, KeyAction> getKeyMapping() {
+		return Collections.unmodifiableMap(keyMapping);
 	}
 	
 	public KeyListener getKeyListener() {

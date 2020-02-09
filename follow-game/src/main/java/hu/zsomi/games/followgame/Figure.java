@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 
 import hu.zsomi.games.geom.Location2D;
+import hu.zsomi.games.geom.Vector2D;
 
 abstract class Figure  {
 
@@ -50,6 +51,10 @@ abstract class Figure  {
 	
 	public void setPosition(Location2D pt) {
 		this.position = pt;
+	}
+
+	public void setPosition(Vector2D vec) {
+		setPosition(vec.getTargetPoint());
 	}
 
 	public void setPosition(double x, double y) {

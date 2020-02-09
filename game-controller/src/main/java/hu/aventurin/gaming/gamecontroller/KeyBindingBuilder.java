@@ -8,14 +8,14 @@ public class KeyBindingBuilder {
 	
 	private final Map<Character, KeyAction> mapping; 
 	
-	class CharMapper {
+	public class CharMapper {
 		private KeyAction func;
 
 		public CharMapper(KeyAction func) {
 			Objects.requireNonNull(func);
 			this.func = func;
 		}
-		KeyBindingBuilder to(char keyChar) {
+		public KeyBindingBuilder to(char keyChar) {
 			mapping.put(Character.toUpperCase(keyChar), func);
 			return KeyBindingBuilder.this;
 		}
@@ -26,7 +26,7 @@ public class KeyBindingBuilder {
 	}
 
 	public KeyBindingBuilder(Map<Character, KeyAction> existingMapping) {
-		this.mapping = existingMapping;
+		this.mapping = new HashMap<>(existingMapping);
 	}
 
 	public CharMapper bindAction(KeyAction  task) {

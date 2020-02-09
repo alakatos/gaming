@@ -21,14 +21,15 @@ import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import hu.aventurin.gaming.gamecontroller.GameController;
+import hu.aventurin.gaming.gamecontroller.KeyBindingBuilder;
 import hu.zsomi.games.geom.Location2D;
 
-class GameArea extends JComponent implements DebrisDisposedListener {
+class GameArea extends JComponent {
 
 	Player player;
 	List<Enemy> enemies;
 	List<Bullet> bullets = new ArrayList<>();
-	List<Debris> debris;
+	List<Debris> debris = new ArrayList<>();;
 	Timer uiUpdateTimer;
 	GameController gameController;
 	long startTime;
@@ -46,7 +47,9 @@ class GameArea extends JComponent implements DebrisDisposedListener {
 				new Enemy(new Location2D(560, 300), 60, Color.ORANGE, 1.5)));
 		setupTimer();
 		gameController = new GameController(player);
-		
+		KeyBindingBuilder kbBuilder = new KeyBindingBuilder(gameController.getKeyMapping());
+		kbBuilder.bindAction(this::spawnEnemy).to('E');
+		gameController.setKeyMapping(kbBuilder.build());
 
 		addEventListeners();
 	}
@@ -64,19 +67,12 @@ class GameArea extends JComponent implements DebrisDisposedListener {
 		
 	}
 
-	void addBullet(Bullet bullet) {
-		if (bullet != null) {
-			bullets.add(bullet);
-		}
-	}
 	
-	void addNewEnemy() {
-		// TODO adj hozzá egy új ellenséget az ellenségek listájához
-		//ha lehet, random helyre, random sebességgel
-		
-		//dplayer.getPosition();
-		Enemy e = new Enemy(new Location2D(160, 100), 70, Color.BLUE, 2);
-		enemies.add(e);
+	private void spawnEnemy(boolean activated) {
+		if (activated) {
+			Enemy e = new Enemy(new Location2D(160, 100), 70, Color.BLUE, 2);
+			enemies.add(e);
+		}
 	}
 
 	private void setupTimer() {
@@ -94,6 +90,7 @@ class GameArea extends JComponent implements DebrisDisposedListener {
 				}
 
 				moveBullets();
+				moveDebris();
 
 				repaint();
 
@@ -107,20 +104,52 @@ class GameArea extends JComponent implements DebrisDisposedListener {
 				}
 			}
 
+
 		});
 
 		uiUpdateTimer.start();
 	}
 
-	private void moveBullets() {
-		List<Bullet> bulletsToRemove = new ArrayList<>();
-		for (Bullet bullet : bullets) {
-			bullet.doIteration();
-			if (!getVisibleRect().contains(bullet.getPosition().asPoint())) {
-				bulletsToRemove.add(bullet);
+	private void moveDebris() {
+		for (Debris aDebris: new ArrayList<>(debris)) {
+			if (aDebris.isOver()) {
+				debris.remove(aDebris);
+			} else {
+				aDebris.doIteration();
 			}
 		}
-		bullets.removeAll(bulletsToRemove);
+	}
+
+	void addBullet(Bullet bullet) {
+		if (bullet != null) {
+			bullets.add(bullet);
+		}
+	}
+	
+	private void moveBullets() {
+		for (Bullet bullet : new ArrayList<>(bullets)) {
+			bullet.doIteration();
+			if (!getVisibleRect().contains(bullet.getPosition().asPoint())) {
+				bullets.remove(bullet);
+			} else {
+				checkBulletCollisionWithEnemy();
+			}
+		}
+	}
+
+	private void checkBulletCollisionWithEnemy() {
+		
+		for (Bullet bullet : new ArrayList<>(bullets)) {
+			for (Enemy enemy : new ArrayList<>(enemies)) {
+				if (bullet.getRectangle().intersects(enemy.getRectangle())) {
+					debris.addAll(enemy.explode());
+					enemies.remove(enemy);
+					bullets.remove(bullet);
+					break;
+				}
+			}
+		}
+		
 	}
 
 	void setAntiAliasing(Graphics2D g) {
@@ -141,13 +170,12 @@ class GameArea extends JComponent implements DebrisDisposedListener {
 		for (Bullet bullet: bullets) {
 			bullet.draw(g);
 		}
+		for (Debris aDebris: debris) {
+			aDebris.draw(g);
+		}
 		player.draw(g);
 
 	}
 
-	@Override
-	public void debrisDisposed(Debris aDebris) {
-		debris.remove(aDebris);
-	}
 
 }

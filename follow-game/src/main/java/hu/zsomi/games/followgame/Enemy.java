@@ -28,7 +28,7 @@ class Enemy extends Figure {
 	}
 
 	private Vector2D countSpeedVector() {
-		return new Vector2D(0,0);//new Vector2D(getPosition(), targetPosition).toLength(getSpeed());
+		return new Vector2D(getPosition(), targetPosition).toLength(getSpeed());
 	}
 
 	void draw(Graphics g) {

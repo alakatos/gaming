@@ -12,11 +12,11 @@ class Launcher {
 		JFrame window = new JFrame("SpagiProgi :)");
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		final GameArea gameArea = new GameArea();
-		gameArea.setPreferredSize(new Dimension(1200, 600));
+		final GamePanel gamePanel = new GamePanel();
+		gamePanel.setPreferredSize(new Dimension(1200, 600));
 
-		window.getContentPane().add(gameArea, BorderLayout.CENTER);
-		gameArea.setFocusable(true);
+		window.getContentPane().add(gamePanel, BorderLayout.CENTER);
+		gamePanel.setFocusable(true);
 		Color NiceOrangeColor = new Color(240, 150, 10);
 		window.getContentPane().setBackground(NiceOrangeColor);
 		window.pack();

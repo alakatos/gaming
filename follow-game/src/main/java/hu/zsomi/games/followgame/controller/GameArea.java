@@ -1,10 +1,11 @@
-package hu.zsomi.games.followgame;
+package hu.zsomi.games.followgame.controller;
+
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,16 +16,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import hu.aventurin.gaming.gamecontroller.GameController;
 import hu.aventurin.gaming.gamecontroller.KeyBindingBuilder;
+import hu.zsomi.games.followgame.Renderer;
+import hu.zsomi.games.followgame.model.Bullet;
+import hu.zsomi.games.followgame.model.Debris;
+import hu.zsomi.games.followgame.model.Enemy;
+import hu.zsomi.games.followgame.model.Player;
 import hu.zsomi.games.geom.Location2D;
 
-class GameArea extends JComponent {
+public class GameArea implements GameCtrl {
 
 	Player player;
 	List<Enemy> enemies;
@@ -35,9 +40,10 @@ class GameArea extends JComponent {
 	long startTime;
 	
 	Image backgroundImage;
+	private JComponent container;
 	 
-	GameArea() throws IOException {
-		backgroundImage = ImageIO.read(getClass().getResourceAsStream("/Landscape_cartoon.png"));
+	public GameArea(JComponent container) throws IOException {
+		this.container = container;
 		startTime = System.currentTimeMillis();
 		player = new Player(new Location2D(500, 500), 60, new Color(0xD0FFFF00, true), 4 ,this);
 		player.setMousePosition(new Point());
@@ -56,17 +62,20 @@ class GameArea extends JComponent {
 
 	private void addEventListeners() {
 		
-		addMouseMotionListener(new MouseMotionAdapter() {
+		container.addMouseMotionListener(new MouseMotionAdapter() {
 			public void mouseMoved(MouseEvent e) {
 				player.setMousePosition(e.getPoint());
 			}
 		});
 
 
-		addKeyListener(gameController.getKeyListener());
+		container.addKeyListener(gameController.getKeyListener());
 		
 	}
 
+	JComponent getContainer() {
+		return container;
+	}
 	
 	private void spawnEnemy(boolean activated) {
 		if (activated) {
@@ -80,7 +89,7 @@ class GameArea extends JComponent {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				player.goToDirection();
+				player.doIteration();
 				for (Enemy enemy : enemies) {
 					enemy.setTargetPoint(player.getPosition());
 					if (System.currentTimeMillis() - startTime > 1000) {
@@ -92,12 +101,12 @@ class GameArea extends JComponent {
 				moveBullets();
 				moveDebris();
 
-				repaint();
+				container.repaint();
 
 				Polygon playerPolygon = player.getPolygon().asAwtPolygon();
 				for (Enemy enemy : enemies) {
 					if (playerPolygon.intersects(enemy.getRectangle())) {
-						JOptionPane.showMessageDialog(GameArea.this, "The enemy hit you!", "Game Over!",
+						JOptionPane.showMessageDialog(container, "The enemy hit you!", "Game Over!",
 								JOptionPane.INFORMATION_MESSAGE);
 						uiUpdateTimer.stop();
 					}
@@ -120,7 +129,7 @@ class GameArea extends JComponent {
 		}
 	}
 
-	void addBullet(Bullet bullet) {
+	public void addBullet(Bullet bullet) {
 		if (bullet != null) {
 			bullets.add(bullet);
 		}
@@ -129,7 +138,7 @@ class GameArea extends JComponent {
 	private void moveBullets() {
 		for (Bullet bullet : new ArrayList<>(bullets)) {
 			bullet.doIteration();
-			if (!getVisibleRect().contains(bullet.getPosition().asPoint())) {
+			if (!container.getVisibleRect().contains(bullet.getPosition().asPoint())) {
 				bullets.remove(bullet);
 			} else {
 				checkBulletCollisionWithEnemy();
@@ -156,25 +165,28 @@ class GameArea extends JComponent {
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 	}
 
+	public Renderer getRenderer() {
+		return (g) -> {
+			if (g instanceof Graphics2D) {
+				setAntiAliasing((Graphics2D) g);
+			}
+
+			for (Enemy enemy : enemies) {
+				enemy.getRenderer().render(g);
+			}
+			for (Bullet bullet: bullets) {
+				bullet.getRenderer().render(g);
+			}
+			for (Debris aDebris: debris) {
+				aDebris.getRenderer().render(g);
+			}
+			player.getRenderer().render(g);
+		};
+	}
+
 	@Override
-	protected void paintComponent(Graphics g) {
-		g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-		if (g instanceof Graphics2D) {
-			setAntiAliasing((Graphics2D) g);
-		}
-
-		super.paintComponent(g);
-		for (Enemy enemy : enemies) {
-			enemy.draw(g);
-		}
-		for (Bullet bullet: bullets) {
-			bullet.draw(g);
-		}
-		for (Debris aDebris: debris) {
-			aDebris.draw(g);
-		}
-		player.draw(g);
-
+	public Rectangle getBounds() {
+		return container.getBounds();
 	}
 
 

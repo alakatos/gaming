@@ -1,4 +1,4 @@
-package hu.zsomi.games.followgame;
+package hu.zsomi.games.followgame.model;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -10,6 +10,8 @@ import java.awt.Stroke;
 
 import hu.aventurin.gaming.gamecontroller.Direction;
 import hu.aventurin.gaming.gamecontroller.GameControllerListener;
+import hu.zsomi.games.followgame.Renderer;
+import hu.zsomi.games.followgame.controller.GameCtrl;
 import hu.zsomi.games.geom.Location2D;
 import hu.zsomi.games.geom.Polygon2D;
 import hu.zsomi.games.geom.Vector2D;
@@ -17,12 +19,12 @@ import hu.zsomi.games.geom.Vector2D;
 public class Player extends Figure implements GameControllerListener {
 
 	private Direction direction = Direction.NONE;
-	private GameArea gameArea;
+	private GameCtrl gameCtrl;
 	private CrossHair crossHair;
 
-	Player(Location2D position, int size, Color color, double speed, GameArea gameArea) {
+	public Player(Location2D position, int size, Color color, double speed, GameCtrl gameCtrl) {
 		super(position, size, color, speed);
-		this.gameArea = gameArea;
+		this.gameCtrl = gameCtrl;
 		crossHair = new CrossHair(position.move(50,50), 40, Color.BLACK);
 	}
 
@@ -32,7 +34,7 @@ public class Player extends Figure implements GameControllerListener {
 			Vector2D speedVec = new Vector2D(getSpeed(),0).rotate(angle).mirrorToAxisX();
 			Location2D newLocation = speedVec.move(getPosition()).getTargetPoint();
 			int s = getSize();
-			Rectangle bounds = new Rectangle(s/2, s/2,  gameArea.getWidth()-s, gameArea.getHeight()-s);
+			Rectangle bounds = new Rectangle(s/2, s/2,  gameCtrl.getBounds().width-s, gameCtrl.getBounds().height-s);
 			setPosition(Math.max(bounds.x, Math.min(bounds.x+bounds.width, newLocation.getX())),
 						Math.max(bounds.y, Math.min(bounds.y+bounds.height, newLocation.getY())));
 		}
@@ -46,7 +48,7 @@ public class Player extends Figure implements GameControllerListener {
 
 	@Override
 	public void firePressed() {
-		gameArea.addBullet(shootBullet());
+		gameCtrl.addBullet(shootBullet());
 	}
 
 	private Point mousePosition;
@@ -69,37 +71,14 @@ public class Player extends Figure implements GameControllerListener {
 		crossHair.setPosition(vec.getTargetPoint());
 	}
 
-	void drawDashedLine(Graphics g, int x1, int y1, int x2, int y2) {
 
-		Graphics2D g2d = (Graphics2D) g.create();
-
-		Stroke dashed = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] { 9 }, 0);
-		g2d.setStroke(dashed);
-		g2d.drawLine(x1, y1, x2, y2);
-
-		g2d.dispose();
-	}
-
-	Polygon2D getPolygon() {
+	public Polygon2D getPolygon() {
 		return Polygon2D.createNormalNPolygon(getSize() / 2, 5)
 				.rotate((int) (((getPosition().getX() + getPosition().getY()) / (double) getSize() / 4) * 360)).
 				move(getPosition());
 
 	}
 
-	void draw(Graphics g) {
-
-		crossHair.draw(g);
-		g.setColor(new Color(0x80000000, true));
-		drawDashedLine(g, getPosition().getXInt(), getPosition().getYInt(), crossHair.getPosition().getXInt(),
-				crossHair.getPosition().getYInt());
-
-		g.setColor(getColor());
-		Polygon2D fiveEdges = getPolygon();
-		g.fillPolygon(fiveEdges.asAwtPolygon());
-		g.setColor(new Color(0x80000000, false));
-		g.drawPolygon(fiveEdges.asAwtPolygon());
-	}
 
 	@Override
 	public void doIteration() {
@@ -118,5 +97,35 @@ public class Player extends Figure implements GameControllerListener {
 			return null;
 		}
 	}
+
+	
+	public Renderer getRenderer() {
+		return new Renderer() {
+			private void drawDashedLine(Graphics g, int x1, int y1, int x2, int y2) {
+
+				Graphics2D g2d = (Graphics2D) g.create();
+
+				Stroke dashed = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] { 9 }, 0);
+				g2d.setStroke(dashed);
+				g2d.drawLine(x1, y1, x2, y2);
+
+				g2d.dispose();
+			}
+			@Override
+			public void render(Graphics g) {
+				crossHair.getRenderer().render(g);
+				g.setColor(new Color(0x80000000, true));
+				drawDashedLine(g, getPosition().getXInt(), getPosition().getYInt(), crossHair.getPosition().getXInt(),
+						crossHair.getPosition().getYInt());
+
+				g.setColor(getColor());
+				Polygon2D fiveEdges = getPolygon();
+				g.fillPolygon(fiveEdges.asAwtPolygon());
+				g.setColor(new Color(0x80000000, false));
+				g.drawPolygon(fiveEdges.asAwtPolygon());
+			}
+		};
+	}
+
 
 }

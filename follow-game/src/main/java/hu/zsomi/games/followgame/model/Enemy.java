@@ -1,25 +1,25 @@
-package hu.zsomi.games.followgame;
+package hu.zsomi.games.followgame.model;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import hu.zsomi.games.followgame.Renderer;
 import hu.zsomi.games.geom.Location2D;
 import hu.zsomi.games.geom.Polygon2D;
 import hu.zsomi.games.geom.Vector2D;
 
-class Enemy extends Figure {
+public class Enemy extends Figure {
 
 	Location2D targetPosition = new Location2D(0, 0);
 
-	Enemy(Location2D position, int size, Color color, double speed) {
+	public Enemy(Location2D position, int size, Color color, double speed) {
 		super(position, size, color, speed + (Math.random() - 0.5) * 0.2);
 	}
 
-	void setTargetPoint(Location2D targetPoint) {
+	public void setTargetPoint(Location2D targetPoint) {
 		this.targetPosition = targetPoint;
 	}
 
@@ -31,10 +31,12 @@ class Enemy extends Figure {
 		return new Vector2D(getPosition(), targetPosition).toLength(getSpeed());
 	}
 
-	void draw(Graphics g) {
-		g.setColor(getColor());
-		Rectangle rect = getRectangle();
-		g.fillRect(rect.x, rect.y, rect.width, rect.height);
+	public Renderer getRenderer() {
+		return (g) -> {
+			g.setColor(getColor());
+			Rectangle rect = getRectangle();
+			g.fillRect(rect.x, rect.y, rect.width, rect.height);
+		};
 	}
 
 	@Override

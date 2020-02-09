@@ -1,9 +1,9 @@
-package hu.zsomi.games.followgame;
+package hu.zsomi.games.followgame.model;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Rectangle;
 
+import hu.zsomi.games.followgame.Renderer;
 import hu.zsomi.games.geom.Location2D;
 import hu.zsomi.games.geom.Vector2D;
 
@@ -15,14 +15,17 @@ public class Bullet extends Figure {
 		speedVector = new Vector2D(position, targetPosition).toLength(speed);
 	}
 
-	@Override
-	public void draw(Graphics g) {
-		Rectangle r = getRectangle();
-		g.setColor(Color.RED);
-		g.fillOval(r.x, r.y, r.width, r.height);
-		setColor(Color.BLACK);
-		g.drawOval(r.x, r.y, r.width, r.height);
+	
+	public Renderer getRenderer() {
+		return (g) -> {
+			Rectangle r = getRectangle();
+			g.setColor(Color.RED);
+			g.fillOval(r.x, r.y, r.width, r.height);
+			setColor(Color.BLACK);
+			g.drawOval(r.x, r.y, r.width, r.height);
+		};
 	}
+
 
 	@Override
 	public void doIteration() {

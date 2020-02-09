@@ -1,12 +1,12 @@
-package hu.zsomi.games.followgame;
+package hu.zsomi.games.followgame.model;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Rectangle;
 
+import hu.zsomi.games.followgame.Renderer;
 import hu.zsomi.games.geom.Location2D;
 import hu.zsomi.games.geom.Vector2D;
 
-abstract class Figure  {
+public abstract class Figure  {
 
 	private Location2D position;
 	private int size = 10;
@@ -65,9 +65,8 @@ abstract class Figure  {
 		return new Rectangle(position.getXInt()-size/2, position.getYInt()-size/2, size, size);
 	}
 
-	abstract void draw(Graphics g);
-	
 	public abstract void doIteration();
 
 
+	public abstract Renderer getRenderer();
 }

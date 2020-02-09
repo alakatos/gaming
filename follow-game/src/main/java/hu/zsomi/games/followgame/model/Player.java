@@ -12,9 +12,9 @@ import hu.aventurin.gaming.gamecontroller.Direction;
 import hu.aventurin.gaming.gamecontroller.GameControllerListener;
 import hu.zsomi.games.followgame.Renderer;
 import hu.zsomi.games.followgame.controller.GameCtrl;
-import hu.zsomi.games.geom.Location2D;
-import hu.zsomi.games.geom.Polygon2D;
-import hu.zsomi.games.geom.Vector2D;
+import hu.zsomi.gaming.geometry.Location2D;
+import hu.zsomi.gaming.geometry.Polygon2D;
+import hu.zsomi.gaming.geometry.Vector2D;
 
 public class Player extends Figure implements GameControllerListener {
 

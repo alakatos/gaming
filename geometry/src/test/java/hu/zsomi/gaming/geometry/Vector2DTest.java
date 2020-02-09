@@ -1,9 +1,11 @@
-package hu.zsomi.games.geom;
+package hu.zsomi.gaming.geometry;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
+
+import hu.zsomi.gaming.geometry.Vector2D;
 
 public class Vector2DTest {
 	

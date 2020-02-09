@@ -27,7 +27,7 @@ import hu.zsomi.games.followgame.model.Bullet;
 import hu.zsomi.games.followgame.model.Debris;
 import hu.zsomi.games.followgame.model.Enemy;
 import hu.zsomi.games.followgame.model.Player;
-import hu.zsomi.games.geom.Location2D;
+import hu.zsomi.gaming.geometry.Location2D;
 
 public class GameArea implements GameCtrl {
 

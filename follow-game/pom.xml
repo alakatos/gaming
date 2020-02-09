@@ -24,5 +24,9 @@
 			<artifactId>game-controller</artifactId>
 			<version>${parent.version}</version>
 		</dependency>
-	</dependencies>
+		<dependency>
+			<groupId>hu.zsomi.gaming</groupId>
+			<artifactId>geometry</artifactId>
+			<version>${parent.version}</version>
+		</dependency>	</dependencies>
 </project>

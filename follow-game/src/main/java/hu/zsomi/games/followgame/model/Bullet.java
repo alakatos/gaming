@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.awt.Rectangle;
 
 import hu.zsomi.games.followgame.Renderer;
-import hu.zsomi.games.geom.Location2D;
-import hu.zsomi.games.geom.Vector2D;
+import hu.zsomi.gaming.geometry.Location2D;
+import hu.zsomi.gaming.geometry.Vector2D;
 
 public class Bullet extends Figure {
 

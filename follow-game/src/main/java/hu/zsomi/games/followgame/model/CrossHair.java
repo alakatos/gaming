@@ -3,7 +3,7 @@ package hu.zsomi.games.followgame.model;
 import java.awt.Color;
 
 import hu.zsomi.games.followgame.Renderer;
-import hu.zsomi.games.geom.Location2D;
+import hu.zsomi.gaming.geometry.Location2D;
 
 public class CrossHair extends Figure {
 

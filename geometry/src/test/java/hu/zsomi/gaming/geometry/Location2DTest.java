@@ -1,4 +1,4 @@
-package hu.zsomi.games.geom;
+package hu.zsomi.gaming.geometry;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;

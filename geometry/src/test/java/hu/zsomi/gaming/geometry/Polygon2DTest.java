@@ -1,4 +1,4 @@
-package hu.zsomi.games.geom;
+package hu.zsomi.gaming.geometry;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -6,6 +6,9 @@ import static org.junit.Assert.assertThat;
 import java.util.Arrays;
 
 import org.junit.Test;
+
+import hu.zsomi.gaming.geometry.Polygon2D;
+import hu.zsomi.gaming.geometry.Vector2D;
 
 public class Polygon2DTest {
 

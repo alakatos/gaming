@@ -1,4 +1,4 @@
-package hu.zsomi.games.geom;
+package hu.zsomi.gaming.geometry;
 
 import java.awt.Point;
 import java.math.BigDecimal;

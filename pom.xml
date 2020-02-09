@@ -9,6 +9,7 @@
 	<packaging>pom</packaging>
 
 	<modules>
+		<module>geometry</module>
 		<module>game-controller</module>
 		<module>follow-game</module>
 	</modules>
@@ -49,5 +50,5 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 </project>

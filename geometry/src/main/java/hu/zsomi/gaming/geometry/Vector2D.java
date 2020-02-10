@@ -1,24 +1,23 @@
 package hu.zsomi.gaming.geometry;
 
-import java.awt.Point;
+import java.awt.geom.Point2D;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class Vector2D {
 
-	private Location2D targetPoint;
+	private static final int ROUND_TO_DECIMAL_PLACES = 6;
+	private Point2D point;
 
-	public Vector2D(Point to) {
-		this(new Location2D(to));
-	}
-
-	public Vector2D(Location2D to) {
-		this(0, 0, to.getX(), to.getY());
+	public Vector2D(Point2D toPoint) {
+		this.point = toPoint;
 	}
 
 	public Vector2D(Vector2D from, Vector2D to) {
-		this(from.getTargetPoint(), to.getTargetPoint());
+		this(from.getPoint(), to.getPoint());
 	}
 
-	public Vector2D(Location2D from, Location2D to) {
+	public Vector2D(Point2D from, Point2D to) {
 		this(from.getX(), from.getY(), to.getX(), to.getY());
 	}
 	
@@ -31,38 +30,36 @@ public class Vector2D {
 	}
 
 	private final void setTargetPoint(double x, double y) {
-		targetPoint = new Location2D(x, y);
+		point = new Point2D.Double(x, y);
 	}
 	
-	public Location2D getTargetPoint() {
-		return targetPoint;
+	public Point2D getPoint() {
+		return point;
 	}
 
 	public double getAngle() {
 		double angle = Math.PI / 2;
-		if (targetPoint.getX() != 0) {
-			angle = Math.atan((double) targetPoint.getY() / targetPoint.getX());
-			if (targetPoint.getX() < 0) {
+		if (point.getX() != 0) {
+			angle = Math.atan((double) point.getY() / point.getX());
+			if (point.getX() < 0) {
 				angle += Math.PI;
 			}
-		} else if (targetPoint.getY() < 0) {
+		} else if (point.getY() < 0) {
 			angle = Math.PI * 3 / 2;
 		}
 		return angle >= 0 ? angle : angle + 2 * Math.PI;
 	}
 
-	public int getAngleGrad() {
-		double angle = getAngle();
-		return angle == 0 ? 0 : (int) (angle / (2 * Math.PI) * 360);
+	public double getAngleGrad() {
+		return rad2Grad(getAngle());
 	}
 
 	public double getLength() {
-		return Math.sqrt(targetPoint.getX() * targetPoint.getX() + targetPoint.getY() * targetPoint.getY());
+		return Math.sqrt(point.getX() * point.getX() + point.getY() * point.getY());
 	}
 
-	public Vector2D rotate(int angleOffs) {
-		int angleGrad = getAngleGrad();
-		double angle = (angleGrad + angleOffs) % 360 / 360d * (2 * Math.PI);
+	public Vector2D rotate(double angleGradOffs) {
+		double angle = getAngle() + grad2Rad(angleGradOffs);
 		double len = getLength();
 		return new Vector2D(Math.cos(angle) * len, Math.sin(angle) * len);
 	}
@@ -81,50 +78,68 @@ public class Vector2D {
 		return new Vector2D(newLength, 0).rotate(getAngleGrad());
 	}
 	
-	public Vector2D move(Point pt) {
-		return move(new Location2D(pt));
+	public Vector2D move(Point2D pt) {
+		return move(pt.getX(), pt.getY());
 	}
 
-	public Vector2D move(Location2D loc) {
-		return move(loc.getX(), loc.getY());
-	}
 	
 	public Vector2D move(double xOffs, double yOffs) {
-		return new Vector2D(targetPoint.move(xOffs, yOffs));
+		return new Vector2D(point.getX()+xOffs, point.getY()+yOffs);
 	}
 	
 	public Vector2D invert() {
-		return new Vector2D(-1*targetPoint.getX(), -1*targetPoint.getY());
+		return new Vector2D(-1*point.getX(), -1*point.getY());
 	}
 
-	public Point asPoint() {
-		return targetPoint.asPoint();
+	public Point2D asPoint() {
+		return point;
 	}
 	
 
 	public Vector2D add(Vector2D vec2add) {
-		return new Vector2D(targetPoint.move(vec2add.getTargetPoint()));
+		return new Vector2D(vec2add.move(point).point);
 	}
 
 	public Vector2D mirrorToAxisX() {
-		return new Vector2D(targetPoint.getX(), targetPoint.getY()*-1);
+		return new Vector2D(point.getX(), point.getY()*-1);
 	}
 
 	public Vector2D mirrorToAxisY() {
-		return new Vector2D(targetPoint.getX()*-1, targetPoint.getY());
+		return new Vector2D(point.getX()*-1, point.getY());
 	}
 
+	
+	@Override
+	public String toString() {
+		return Vector2D.class.getSimpleName() + " to " + point.toString();
+	}
+	
+	private static double rad2Grad(double angleRad) {
+		return angleRad/(2*Math.PI)*360;
+	}
+	private static double grad2Rad(double angleGrad) {
+		return angleGrad/360 * 2*Math.PI;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Vector2D) {
 			Vector2D otherVec = (Vector2D) obj;
-			return targetPoint.equals(otherVec.targetPoint);
+			return round(getPoint().getX()) == round(otherVec.getPoint().getX()) &&
+				   round(getPoint().getY()) == round(otherVec.getPoint().getY());
 		}
 		return false;
 	}
-	
+
 	@Override
-	public String toString() {
-		return Vector2D.class.getSimpleName() + " to " + targetPoint.toString();
+	public int hashCode() {
+		return (round(point.getX())+""+round(point.getY())).hashCode();
 	}
+	
+	private static double round(double value) {
+	    BigDecimal bd = BigDecimal.valueOf(value);
+	    bd = bd.setScale(ROUND_TO_DECIMAL_PLACES, RoundingMode.HALF_UP);
+	    return bd.doubleValue();
+	}
+
 }

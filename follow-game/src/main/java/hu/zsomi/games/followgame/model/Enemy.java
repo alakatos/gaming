@@ -2,29 +2,29 @@ package hu.zsomi.games.followgame.model;
 
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import hu.zsomi.games.followgame.Renderer;
-import hu.zsomi.gaming.geometry.Location2D;
 import hu.zsomi.gaming.geometry.Polygon2D;
 import hu.zsomi.gaming.geometry.Vector2D;
 
 public class Enemy extends Figure {
 
-	Location2D targetPosition = new Location2D(0, 0);
+	Point2D targetPosition = new Point2D.Double(0, 0);
 
-	public Enemy(Location2D position, int size, Color color, double speed) {
+	public Enemy(Point2D position, int size, Color color, double speed) {
 		super(position, size, color, speed + (Math.random() - 0.5) * 0.2);
 	}
 
-	public void setTargetPoint(Location2D targetPoint) {
+	public void setTargetPoint(Point2D targetPoint) {
 		this.targetPosition = targetPoint;
 	}
 
 	private void followTarget() {
-		setPosition(countSpeedVector().move(getPosition()).getTargetPoint());
+		setPosition(countSpeedVector().move(getPosition()).getPoint());
 	}
 
 	private Vector2D countSpeedVector() {
@@ -73,7 +73,7 @@ public class Enemy extends Figure {
 			Vector2D debrisSpeedVector = countSpeedVector().add(new Vector2D(randomMiddlePoint, massCenterPoint).toLength(1).scale((1-massRatio)*5));
 			debris.add(
 					new Debris(
-							massCenterPoint.getTargetPoint(), 
+							massCenterPoint.getPoint(), 
 							triangle.move(massCenterPoint.invert()), 
 							getColor(),
 							debrisSpeedVector, 

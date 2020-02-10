@@ -1,8 +1,9 @@
 package hu.zsomi.gaming.geometry;
 
-import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Polygon2D {
@@ -40,14 +41,10 @@ public class Polygon2D {
 		return new Polygon2D(newPolyPoints);
 	}
 
-	public Polygon2D move(Point pt) {
-		return (move(pt.x, pt.y));
-	}
-
 	public Polygon2D move(Vector2D vec) {
-		return move(vec.getTargetPoint());
+		return move(vec.getPoint());
 	}
-	public Polygon2D move(Location2D loc) {
+	public Polygon2D move(Point2D loc) {
 		return move(loc.getX(), loc.getY());
 	}
 
@@ -65,7 +62,7 @@ public class Polygon2D {
 		Vector2D baseVec = new Vector2D(radius, 0);
 		double angleMul = 360d / numberOfEdges;
 		for (int i = 0; i < numberOfEdges; i++) {
-			polyPoints.add(baseVec.rotate((int) (angleMul * i)));
+			polyPoints.add(baseVec.rotate(angleMul * i));
 		}
 		return new Polygon2D(polyPoints);
 	}
@@ -73,7 +70,7 @@ public class Polygon2D {
 	public Polygon asAwtPolygon() {
 		Polygon p = new Polygon();
 		for (Vector2D pt : points) {
-			p.addPoint(pt.getTargetPoint().getXInt(), pt.getTargetPoint().getYInt());
+			p.addPoint((int)pt.getPoint().getX(), (int)pt.getPoint().getY());
 		}
 		return p;
 	}
@@ -88,10 +85,10 @@ public class Polygon2D {
 		
 		int j = n - 1;
 		for (int i = 0; i < n; i++) {
-			area += (points.get(j).getTargetPoint().getX() + 
-					points.get(i).getTargetPoint().getX()) * (
-							points.get(j).getTargetPoint().getY() - 
-							points.get(i).getTargetPoint().getY());
+			area += (points.get(j).getPoint().getX() + 
+					points.get(i).getPoint().getX()) * (
+							points.get(j).getPoint().getY() - 
+							points.get(i).getPoint().getY());
 			j = i;
 		}
 
@@ -103,12 +100,31 @@ public class Polygon2D {
 		double sumX = 0;
 		double sumY = 0;
 		for (Vector2D corner : points) {
-			sumX += corner.getTargetPoint().getX();
-			sumY += corner.getTargetPoint().getY();
+			sumX += corner.getPoint().getX();
+			sumY += corner.getPoint().getY();
 		}
 		return new Vector2D(sumX/points.size(),sumY/points.size());
 	}
+
+	public List<Polygon2D> cutRadiallyToNEqualAreaTriangles() {
+		return cutRadiallyToNTriangles(calculateMassCenterPoint());
+	}
 	
+	public List<Polygon2D> cutRadiallyToNTriangles(Vector2D fromPoint) {
+		asAwtPolygon().contains(fromPoint.getPoint());
+		List<Polygon2D> polys = new ArrayList<>();
+		for (int i = 0; i < points.size()-1; i++) {
+			polys.add(new Polygon2D(Arrays.asList(
+					fromPoint,
+					points.get(i),
+					points.get(i+1))));
+		}
+		polys.add(new Polygon2D(Arrays.asList(
+				fromPoint,
+				points.get(points.size()-1),
+				points.get(0))));
+		return polys;
+	}
 
 	
 	public List<Vector2D> getPoints() {

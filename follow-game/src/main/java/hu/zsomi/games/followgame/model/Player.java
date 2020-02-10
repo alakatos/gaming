@@ -7,12 +7,12 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Stroke;
+import java.awt.geom.Point2D;
 
 import hu.aventurin.gaming.gamepad.Direction;
 import hu.aventurin.gaming.gamepad.GamePadListener;
 import hu.zsomi.games.followgame.GameController;
 import hu.zsomi.games.followgame.Renderer;
-import hu.zsomi.gaming.geometry.Location2D;
 import hu.zsomi.gaming.geometry.Polygon2D;
 import hu.zsomi.gaming.geometry.Vector2D;
 
@@ -22,17 +22,17 @@ public class Player extends Figure implements GamePadListener {
 	private GameController gameCtrl;
 	private CrossHair crossHair;
 
-	public Player(Location2D position, int size, Color color, double speed, GameController gameCtrl) {
+	public Player(Point2D position, int size, Color color, double speed, GameController gameCtrl) {
 		super(position, size, color, speed);
 		this.gameCtrl = gameCtrl;
-		crossHair = new CrossHair(position.move(50,50), 40, Color.BLACK);
+		crossHair = new CrossHair(new Point2D.Double(50,50), 40, Color.BLACK);
 	}
 
 	void goToDirection() {
 		int angle = direction.getAngle();
 		if (angle > -1) {
 			Vector2D speedVec = new Vector2D(getSpeed(),0).rotate(angle).mirrorToAxisX();
-			Location2D newLocation = speedVec.move(getPosition()).getTargetPoint();
+			Point2D newLocation = speedVec.move(getPosition()).getPoint();
 			int s = getSize();
 			Rectangle bounds = new Rectangle(s/2, s/2,  gameCtrl.getBounds().width-s, gameCtrl.getBounds().height-s);
 			setPosition(Math.max(bounds.x, Math.min(bounds.x+bounds.width, newLocation.getX())),
@@ -51,7 +51,7 @@ public class Player extends Figure implements GamePadListener {
 		gameCtrl.addBullet(shootBullet());
 	}
 
-	private Point mousePosition;
+	private Point2D mousePosition;
 
 	public void setMousePosition(Point mousePosition) {
 		this.mousePosition = mousePosition;
@@ -65,10 +65,10 @@ public class Player extends Figure implements GamePadListener {
 	}
 
 	public void updateCrossHairPosition() {
-		Vector2D vec = new Vector2D(getPosition(), new Location2D(mousePosition)).
+		Vector2D vec = new Vector2D(getPosition(), mousePosition).
 				toLength(200).
 				move(getPosition());
-		crossHair.setPosition(vec.getTargetPoint());
+		crossHair.setPosition(vec.getPoint());
 	}
 
 
@@ -90,9 +90,9 @@ public class Player extends Figure implements GamePadListener {
 	
 	Bullet shootBullet() {
 		if (System.currentTimeMillis() - latesShot > weaponReloadTime) {
-			Location2D bulletStartPoint = new Vector2D(getPosition(), new Location2D(mousePosition)).toLength(getSize()/2).move(getPosition()).getTargetPoint();
+			Point2D bulletStartPoint = new Vector2D(getPosition(), mousePosition).toLength(getSize()/2).move(getPosition()).getPoint();
 			latesShot = System.currentTimeMillis();
-			return new Bullet(bulletStartPoint, new Location2D(mousePosition), 6, 10);
+			return new Bullet(bulletStartPoint, mousePosition, 6, 10);
 		} else {
 			return null;
 		}
@@ -115,8 +115,8 @@ public class Player extends Figure implements GamePadListener {
 			public void render(Graphics g) {
 				crossHair.getRenderer().render(g);
 				g.setColor(new Color(0x80000000, true));
-				drawDashedLine(g, getPosition().getXInt(), getPosition().getYInt(), crossHair.getPosition().getXInt(),
-						crossHair.getPosition().getYInt());
+				drawDashedLine(g, (int)getPosition().getX(), (int)getPosition().getY(), (int)crossHair.getPosition().getX(),
+						(int)crossHair.getPosition().getY());
 
 				g.setColor(getColor());
 				Polygon2D fiveEdges = getPolygon();

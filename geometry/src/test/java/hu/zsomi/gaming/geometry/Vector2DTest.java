@@ -26,22 +26,22 @@ public class Vector2DTest {
 	@Test
 	public void testAngleGrad() {
 		vector = new Vector2D(1,0);
-		assertThat(vector.getAngleGrad(), equalTo(0));
+		assertThat(vector.getAngleGrad(), equalTo(0d));
 		vector = new Vector2D(0,1);
-		assertThat(vector.getAngleGrad(), equalTo(90));
+		assertThat(vector.getAngleGrad(), equalTo(90d));
 		vector = new Vector2D(-1,0);
-		assertThat(vector.getAngleGrad(), equalTo(180));
+		assertThat(vector.getAngleGrad(), equalTo(180d));
 		vector = new Vector2D(0,-1);
-		assertThat(vector.getAngleGrad(), equalTo(270));
+		assertThat(vector.getAngleGrad(), equalTo(270d));
 
 		vector = new Vector2D(1,1);
-		assertThat(vector.getAngleGrad(), equalTo(45));
+		assertThat(vector.getAngleGrad(), equalTo(45d));
 		vector = new Vector2D(-1,1);
-		assertThat(vector.getAngleGrad(), equalTo(135));
+		assertThat(vector.getAngleGrad(), equalTo(135d));
 		vector = new Vector2D(-1,-1);
-		assertThat(vector.getAngleGrad(), equalTo(225));
+		assertThat(vector.getAngleGrad(), equalTo(225d));
 		vector = new Vector2D(1,-1);
-		assertThat(vector.getAngleGrad(), equalTo(315));
+		assertThat(vector.getAngleGrad(), equalTo(315d));
 	}
 	
 	@Test

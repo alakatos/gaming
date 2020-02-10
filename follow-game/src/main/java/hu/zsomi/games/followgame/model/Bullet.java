@@ -2,15 +2,15 @@ package hu.zsomi.games.followgame.model;
 
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.awt.geom.Point2D;
 
 import hu.zsomi.games.followgame.Renderer;
-import hu.zsomi.gaming.geometry.Location2D;
 import hu.zsomi.gaming.geometry.Vector2D;
 
 public class Bullet extends Figure {
 
 	private Vector2D speedVector;
-	public Bullet(Location2D position, Location2D targetPosition, int size, double speed) {
+	public Bullet(Point2D position, Point2D targetPosition, int size, double speed) {
 		super(position, size, Color.RED, speed);
 		speedVector = new Vector2D(position, targetPosition).toLength(speed);
 	}
@@ -29,7 +29,7 @@ public class Bullet extends Figure {
 
 	@Override
 	public void doIteration() {
-		setPosition(speedVector.move(getPosition()).getTargetPoint());
+		setPosition(speedVector.move(getPosition()).getPoint());
 	}
 
 }

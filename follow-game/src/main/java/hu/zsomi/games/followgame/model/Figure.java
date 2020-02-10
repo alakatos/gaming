@@ -1,19 +1,19 @@
 package hu.zsomi.games.followgame.model;
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.awt.geom.Point2D;
 
 import hu.zsomi.games.followgame.Renderer;
-import hu.zsomi.gaming.geometry.Location2D;
 import hu.zsomi.gaming.geometry.Vector2D;
 
 public abstract class Figure  {
 
-	private Location2D position;
+	private Point2D position;
 	private int size = 10;
 	private Color color;
 	private double speed;
 	
-	public Figure(Location2D position, int size, Color color, double speed) {
+	public Figure(Point2D position, int size, Color color, double speed) {
 		this.position = position;
 		this.size = size;
 		this.color = color;
@@ -45,24 +45,24 @@ public abstract class Figure  {
 		return size;
 	}
 	
-	public Location2D getPosition() {
+	public Point2D getPosition() {
 		return position;
 	}
 	
-	public void setPosition(Location2D pt) {
+	public void setPosition(Point2D pt) {
 		this.position = pt;
 	}
 
 	public void setPosition(Vector2D vec) {
-		setPosition(vec.getTargetPoint());
+		setPosition(vec.getPoint());
 	}
 
 	public void setPosition(double x, double y) {
-		setPosition(new Location2D(x,y));
+		setPosition(new Point2D.Double(x,y));
 	}
 	
 	public Rectangle getRectangle() {
-		return new Rectangle(position.getXInt()-size/2, position.getYInt()-size/2, size, size);
+		return new Rectangle((int)position.getX()-size/2, (int)position.getY()-size/2, size, size);
 	}
 
 	public abstract void doIteration();

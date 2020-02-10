@@ -1,9 +1,9 @@
 package hu.zsomi.games.followgame.model;
 
 import java.awt.Color;
+import java.awt.geom.Point2D;
 
 import hu.zsomi.games.followgame.Renderer;
-import hu.zsomi.gaming.geometry.Location2D;
 import hu.zsomi.gaming.geometry.Polygon2D;
 import hu.zsomi.gaming.geometry.Vector2D;
 
@@ -15,7 +15,7 @@ public class Debris extends Figure {
 	private double angle;
 	private static final double MAX_LIFETIME = 1000d;
 	private long createdTst;
-	public Debris(Location2D position, Polygon2D shape, Color color, Vector2D speedVector, double rotationSpeed) {
+	public Debris(Point2D position, Polygon2D shape, Color color, Vector2D speedVector, double rotationSpeed) {
 		super(position, 1, color, speedVector.getLength());
 		this.speedVector = speedVector;
 		this.rotationSpeed = rotationSpeed;

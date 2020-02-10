@@ -1,21 +1,21 @@
 package hu.zsomi.games.followgame.model;
 
 import java.awt.Color;
+import java.awt.geom.Point2D;
 
 import hu.zsomi.games.followgame.Renderer;
-import hu.zsomi.gaming.geometry.Location2D;
 
 public class CrossHair extends Figure {
 
-	CrossHair(Location2D position, int size, Color color) {
+	CrossHair(Point2D position, int size, Color color) {
 		super(position, size, color, 0);
 	}
 	
 	public Renderer getRenderer() {
 		return (g) -> {
 			g.setColor(getColor());
-			int focusX = getPosition().getXInt(); 
-			int focusY = getPosition().getYInt();
+			int focusX = (int) getPosition().getX(); 
+			int focusY = (int) getPosition().getY();
 			int w = getSize();
 			int h = getSize();
 			g.drawOval(focusX-5, focusY-5, w-30, h-30);

@@ -27,7 +27,6 @@ import hu.zsomi.games.followgame.model.Bullet;
 import hu.zsomi.games.followgame.model.Debris;
 import hu.zsomi.games.followgame.model.Enemy;
 import hu.zsomi.games.followgame.model.Player;
-import hu.zsomi.gaming.geometry.Location2D;
 
 public class GameArea implements GameController {
 
@@ -44,12 +43,12 @@ public class GameArea implements GameController {
 	public GameArea(JComponent container) throws IOException {
 		this.container = container;
 		startTime = System.currentTimeMillis();
-		player = new Player(new Location2D(500, 500), 60, new Color(0xD0FFFF00, true), 4 ,this);
+		player = new Player(new Point(500, 500), 60, new Color(0xD0FFFF00, true), 4 ,this);
 		player.setMousePosition(new Point());
 		enemies = new ArrayList<>(Arrays.asList(
-				new Enemy(new Location2D(560, 100), 70, Color.BLUE, 2),
-				new Enemy(new Location2D(560, 200), 50, Color.GREEN, 1),
-				new Enemy(new Location2D(560, 300), 60, Color.ORANGE, 1.5)));
+				new Enemy(new Point(560, 100), 70, Color.BLUE, 2),
+				new Enemy(new Point(560, 200), 50, Color.GREEN, 1),
+				new Enemy(new Point(560, 300), 60, Color.ORANGE, 1.5)));
 		setupTimer();
 		gamePad = new GamePad(player, 1);
 		KeyBindingBuilder kbBuilder = new KeyBindingBuilder(gamePad.createDefaultMapping());
@@ -78,7 +77,7 @@ public class GameArea implements GameController {
 	
 	private void spawnEnemy(boolean activated) {
 		if (activated) {
-			Enemy e = new Enemy(new Location2D(160, 100), 70, Color.BLUE, 2);
+			Enemy e = new Enemy(new Point(160, 100), 70, Color.BLUE, 2);
 			enemies.add(e);
 		}
 	}
@@ -137,7 +136,7 @@ public class GameArea implements GameController {
 	private void moveBullets() {
 		for (Bullet bullet : new ArrayList<>(bullets)) {
 			bullet.doIteration();
-			if (!container.getVisibleRect().contains(bullet.getPosition().asPoint())) {
+			if (!container.getVisibleRect().contains(bullet.getPosition())) {
 				bullets.remove(bullet);
 			} else {
 				checkBulletCollisionWithEnemy();

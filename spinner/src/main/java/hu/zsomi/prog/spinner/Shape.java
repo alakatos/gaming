@@ -53,8 +53,7 @@ public class Shape {
 		}
 	}
 
-	public void dropShadow(Graphics g, Environment env) {
-		
+	private void dropShadow(Graphics g, Environment env) {
 		Vector2D middlePoint = new Vector2D(location);
 		int shadowDistance = 10;
 		Vector2D shadowOffsetVec = new Vector2D(shadowDistance,0).rotate(env.getLightAngle()+180);
@@ -62,22 +61,21 @@ public class Shape {
 		
 		Polygon2D rotatedPolygon = poly.rotate(angle); 
 
-		Color color = new Color(0x80000000, true);
-		for (int distance = 4; distance >= 0; distance--) {
+		Color color = new Color(0x30000000, true);
+		for (int distance = 6; distance > 0; distance-=2) {
 			drawSmoothShadowPoly(rotatedPolygon, shadowCenter, g, color, distance);
 		}
 
 		g.setColor(color);
 		g.fillPolygon(rotatedPolygon.move(shadowCenter).asAwtPolygon());
-		
 	}
+	
 	private void drawSmoothShadowPoly(Polygon2D rotatedPolygon, Vector2D shadowCenter, Graphics g, Color color, int distance) {
-		g.setColor(new Color((color.getRGB() & 0x00FFFFFF) | ((color.getAlpha() - distance*0x20)<<24), true));
-		g.drawPolygon(rotatedPolygon.toRadius(radius+distance).move(shadowCenter).asAwtPolygon());
-		
+		g.setColor(color);
+		g.fillPolygon(rotatedPolygon.toRadius(radius+distance).move(shadowCenter).asAwtPolygon());
 	}
 
-	public void drawSegments(Graphics g) {
+	private void paintAllSegments(Graphics g) {
 		List<Polygon2D> triangles = poly.rotate(angle).move(location).cutRadiallyToNEqualAreaTriangles();
 		Iterator<Color> colorIter = colors.iterator();
 		for (Polygon2D triangle: triangles) {
@@ -86,13 +84,14 @@ public class Shape {
 		}
 	}
 	
-	public void paintInOnePiece(Graphics g) {
+	private void paintInOnePiece(Graphics g) {
 		g.setColor(colors.get(0));
 		g.fillPolygon(poly.rotate(angle).move(location).asAwtPolygon());
 	}
+	
 	public void draw(Graphics g, Environment env) {
 		dropShadow(g, env);
-		drawSegments(g);
+		paintAllSegments(g);
 		//paintInOnePiece(g);
 	}
 	

@@ -20,7 +20,7 @@ public class SpinnerPanel extends JComponent implements Environment {
 
 	private Timer uiTmer;
 	private List<Shape> shapes = new ArrayList<>();
-	private Vector2D lightVector = new Vector2D(1,1).rotate(180);
+	private Vector2D lightVector = new Vector2D(1, 1).rotate(180);
 
 	public SpinnerPanel() {
 		uiTmer = new Timer(10, new ActionListener() {
@@ -29,7 +29,7 @@ public class SpinnerPanel extends JComponent implements Environment {
 				for (Shape shape : shapes) {
 					shape.calculateNextFrame();
 				}
-				//lightVector = lightVector.rotate(1);
+				// lightVector = lightVector.rotate(1);
 				repaint();
 			}
 		});
@@ -48,7 +48,20 @@ public class SpinnerPanel extends JComponent implements Environment {
 	}
 
 	private void addNewPolygon(Point point) {
-		// TODO ezt csin�ld meg, Zsomik�m! :)
+		//TODO Zsomikám, adj hozzá új sokszöget (fennebb találsz rá példát)
+		//a sokszög a megkapott point kordinátára kerüljön
+		//hogy hány szöge van, az a Shape osztály paraméterezésétől függ, nézd meg!
+		//
+		//Puszi!
+		//Apa
+
+		//ide írd az utasítást:
+		
+		
+		
+		if (shapes.size() > 20) {
+			shapes.remove(0);
+		}
 	}
 
 	void setAntiAliasing(Graphics2D g) {
@@ -61,10 +74,6 @@ public class SpinnerPanel extends JComponent implements Environment {
 		if (g instanceof Graphics2D) {
 			setAntiAliasing((Graphics2D) g);
 		}
-//
-//		for (Shape shape : shapes) {
-//			shape.dropShadow(g, this);
-//		}
 
 		for (Shape shape : shapes) {
 			shape.draw(g, this);

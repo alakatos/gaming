@@ -73,7 +73,7 @@ public class Player extends Figure implements GamePadListener {
 
 
 	public Polygon2D getPolygon() {
-		return Polygon2D.createNormalNPolygon(getSize() / 2, 5)
+		return Polygon2D.createRegularPolygon(getSize() / 2, 5)
 				.rotate((int) (((getPosition().getX() + getPosition().getY()) / (double) getSize() / 4) * 360)).
 				move(getPosition());
 

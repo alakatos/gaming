@@ -22,10 +22,21 @@ public class Polygon2D {
 		points.add(polyPoint);
 	}
 
-	public Polygon2D rotate(int angle) {
+	public Polygon2D rotate(double angle) {
 		List<Vector2D> newPolyPoints = new ArrayList<>();
 		for (Vector2D pt : points) {
 			newPolyPoints.add(pt.rotate(angle));
+		}
+		return new Polygon2D(newPolyPoints);
+	}
+
+	public Polygon2D toRadius(double newRadius) {
+		if (newRadius < 1) {
+			throw new IllegalArgumentException("Scale extent should be positive number");
+		}
+		List<Vector2D> newPolyPoints = new ArrayList<>();
+		for (Vector2D pt : points) {
+			newPolyPoints.add(pt.toLength(newRadius));
 		}
 		return new Polygon2D(newPolyPoints);
 	}
@@ -57,7 +68,7 @@ public class Polygon2D {
 	}
 	
 
-	public static Polygon2D createNormalNPolygon(double radius, int numberOfEdges) {
+	public static Polygon2D createRegularPolygon(double radius, int numberOfEdges) {
 		List<Vector2D> polyPoints = new ArrayList<>();
 		Vector2D baseVec = new Vector2D(radius, 0);
 		double angleMul = 360d / numberOfEdges;
@@ -133,6 +144,6 @@ public class Polygon2D {
 	
 	@Override
 	public String toString() {
-		return points.toString();
+		return getClass().getSimpleName()+points.toString();
 	}
 }

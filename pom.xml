@@ -12,6 +12,7 @@
 		<module>geometry</module>
 		<module>gamepad</module>
 		<module>follow-game</module>
+		<module>spinner</module>
 	</modules>
 
 	<dependencyManagement>

@@ -6,7 +6,7 @@ import java.math.RoundingMode;
 
 public class Vector2D {
 
-	private static final int ROUND_TO_DECIMAL_PLACES = 6;
+	private static final int DEFAULT_DECIMAL_PLACES_TO_ROUND_TO = 6;
 	private Point2D point;
 
 	public Vector2D(Point2D toPoint) {
@@ -111,7 +111,7 @@ public class Vector2D {
 	
 	@Override
 	public String toString() {
-		return Vector2D.class.getSimpleName() + " to " + point.toString();
+		return Vector2D.class.getSimpleName() + "(" + round(point.getX(), 3) + ", "+ round(point.getY(), 3)+")";
 	}
 	
 	private static double rad2Grad(double angleRad) {
@@ -137,8 +137,11 @@ public class Vector2D {
 	}
 	
 	private static double round(double value) {
+		return round(value, DEFAULT_DECIMAL_PLACES_TO_ROUND_TO);
+	}
+	private static double round(double value, int toDecimalPlaces) {
 	    BigDecimal bd = BigDecimal.valueOf(value);
-	    bd = bd.setScale(ROUND_TO_DECIMAL_PLACES, RoundingMode.HALF_UP);
+	    bd = bd.setScale(toDecimalPlaces, RoundingMode.HALF_UP);
 	    return bd.doubleValue();
 	}
 

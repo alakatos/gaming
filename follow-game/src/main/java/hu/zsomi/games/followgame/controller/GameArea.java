@@ -1,11 +1,9 @@
 package hu.zsomi.games.followgame.controller;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -156,19 +154,12 @@ public class GameArea implements GameController {
 				}
 			}
 		}
-		
 	}
 
-	void setAntiAliasing(Graphics2D g) {
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-	}
+
 
 	public Renderer getRenderer() {
 		return (g) -> {
-			if (g instanceof Graphics2D) {
-				setAntiAliasing((Graphics2D) g);
-			}
-
 			for (Enemy enemy : enemies) {
 				enemy.getRenderer().render(g);
 			}

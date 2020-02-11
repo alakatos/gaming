@@ -4,11 +4,11 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>hu.zsomi</groupId>
+		<groupId>hu.laki</groupId>
 		<artifactId>gaming</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-		<groupId>hu.zsomi.gaming</groupId>
+		<groupId>hu.laki.gaming</groupId>
 	<artifactId>geometry</artifactId>
 	<name>geometry</name>
 	<version>${parent.version}</version>

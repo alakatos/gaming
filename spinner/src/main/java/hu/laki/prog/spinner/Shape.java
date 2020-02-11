@@ -36,13 +36,20 @@ public class Shape {
 		this.location = location;
 		this.radius = radius;
 		
+		Color c = createRandomColor();
 		for (int i = 0; i < numberOfEdges; i++) {
-			colors.add(new Color(
-					(int)(Math.random()*100+100) << 16 |
-					(int)(Math.random()*90+100) << 8 |
-					(int)(Math.random()*80+100)
-					));
+			colors.add(c);
 		}
+	}
+	
+	private Color createRandomColor() {
+		int darkest = 100;
+		int brightest = 200;
+		return new Color(
+				(int)(Math.random()*(brightest-darkest)+darkest) << 16 |
+				(int)(Math.random()*(brightest-darkest)+darkest) << 8 |
+				(int)(Math.random()*(brightest-darkest)+darkest)
+				);
 	}
 	
 	public void calculateNextFrame() {
@@ -61,7 +68,8 @@ public class Shape {
 		
 		Polygon2D rotatedPolygon = poly.rotate(angle); 
 
-		Color color = new Color(0x30000000, true);
+		Color color = new Color(0x20000000, true);
+		
 		for (int distance = 6; distance > 0; distance-=2) {
 			drawSmoothShadowPoly(rotatedPolygon, shadowCenter, g, color, distance);
 		}
@@ -75,14 +83,38 @@ public class Shape {
 		g.fillPolygon(rotatedPolygon.toRadius(radius+distance).move(shadowCenter).asAwtPolygon());
 	}
 
-	private void paintAllSegments(Graphics g) {
+	private void paintAllSegments(Graphics g, Environment env) {
 		List<Polygon2D> triangles = poly.rotate(angle).move(location).cutRadiallyToNEqualAreaTriangles();
 		Iterator<Color> colorIter = colors.iterator();
 		for (Polygon2D triangle: triangles) {
-			g.setColor(colorIter.next());
+			Color newColor = calcShadowedColor(env.getLightAngle(), colorIter.next(), triangle.getPoints()); 
+			g.setColor(newColor);
 			g.fillPolygon(triangle.asAwtPolygon());
 		}
 	}
+
+	private Color calcShadowedColor(double lightAngle, Color color, List<Vector2D> points) {
+		Vector2D midLine = new Vector2D(points.get(0), points.get(1)).add(new Vector2D(points.get(1), points.get(2)).scale(0.5));
+		double lightAngleDiff = Math.abs(lightAngle - midLine.getAngleGrad());
+		if (lightAngleDiff >= 180) {
+			lightAngleDiff = 180 - (lightAngleDiff-180);
+		}
+		double addBrightness = 1-lightAngleDiff/180;
+		Color newColor = changeBrighness(color, 1+addBrightness*0.30);
+		return newColor;
+	}
+    
+	private Color changeBrighness(Color origColor, double extent) {
+        int r = origColor.getRed();
+        int g = origColor.getGreen();
+        int b = origColor.getBlue();
+        int alpha = origColor.getAlpha();
+
+        return new Color(Math.min((int)(r*extent), 255),
+                         Math.min((int)(g*extent), 255),
+                         Math.min((int)(b*extent), 255),
+                         alpha);
+    }
 	
 	private void paintInOnePiece(Graphics g) {
 		g.setColor(colors.get(0));
@@ -91,7 +123,7 @@ public class Shape {
 	
 	public void draw(Graphics g, Environment env) {
 		dropShadow(g, env);
-		paintAllSegments(g);
+		paintAllSegments(g, env);
 		//paintInOnePiece(g);
 	}
 	

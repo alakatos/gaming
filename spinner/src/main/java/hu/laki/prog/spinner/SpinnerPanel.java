@@ -10,9 +10,12 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.Timer;
 
@@ -24,15 +27,17 @@ public class SpinnerPanel extends JComponent implements Environment {
 	private List<Shape> shapes = new ArrayList<>();
 	private Vector2D lightVector = new Vector2D(1, 1).rotate(180);
 	private int edgeCount = 3;
+	private BufferedImage backgroundImage;
 
-	public SpinnerPanel() {
-		uiTmer = new Timer(10, new ActionListener() {
+	public SpinnerPanel() throws IOException {
+		backgroundImage = ImageIO.read(getClass().getResourceAsStream("/Landscape_cartoon.png"));
+		uiTmer = new Timer(15, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				for (Shape shape : shapes) {
 					shape.calculateNextFrame();
 				}
-				// lightVector = lightVector.rotate(1);
+				//lightVector = lightVector.rotate(1);
 				repaint();
 			}
 		});
@@ -74,6 +79,7 @@ public class SpinnerPanel extends JComponent implements Environment {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
 		if (g instanceof Graphics2D) {
 			setAntiAliasing((Graphics2D) g);
 		}

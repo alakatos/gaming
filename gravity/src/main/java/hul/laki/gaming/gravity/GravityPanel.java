@@ -30,14 +30,14 @@ public class GravityPanel extends JComponent {
 	public GravityPanel() throws IOException {
 		kineticModel = new GravityKineticModel();
 		keypad = new GamePad(kineticModel, 1);
-		new Timer(1, new ActionListener() {
+		new Timer(5, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				kineticModel.calculateNextFrame();
 			}
 		}).start();
 
-		uiTmer = new Timer(5, new ActionListener() {
+		uiTmer = new Timer(10, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				repaint();

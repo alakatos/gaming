@@ -13,7 +13,8 @@
 		<module>follow-game</module>
 		<module>spinner</module>
     <module>gravity</module>
-  </modules>
+    <module>speedtest</module>
+	</modules>
 
 	<dependencyManagement>
 		<dependencies>

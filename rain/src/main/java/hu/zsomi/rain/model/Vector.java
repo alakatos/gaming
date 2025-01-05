@@ -3,7 +3,6 @@ package hu.zsomi.rain.model;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 
-
 public class Vector {
 
     public double x;
@@ -31,11 +30,15 @@ public class Vector {
     }
 
     public Vector multiply(double multiplier) {
-      return new Vector(x*multiplier, y*multiplier);
+        return new Vector(x * multiplier, y * multiplier);
     }
 
     public double length() {
-        return Math.sqrt(x*x + y*y);
+        return Math.sqrt(x * x + y * y);
     }
-    
+
+    public String toString() {
+        return String.format("x: %.2f, y: %.2f", x, y);
+    }
+
 }

@@ -15,20 +15,47 @@ import javax.swing.JComponent;
 import javax.swing.Timer;
 
 import hu.zsomi.rain.model.Particles;
-import hu.zsomi.rain.model.SpaceGeometryProvider;
+import lombok.Getter;
 
-public class MainPanel extends JComponent implements SpaceGeometryProvider {
+public class MainPanel extends JComponent implements RenderingContext {
 
     private Timer uiTimer;
-    private Timer calcTimer;
     private final Particles particleModel;
-	private Point mouseLocation;
+    @Getter
+    private Point mouseLocation;
+    @Getter
+    private final RainConfig config;
 
-    public MainPanel(Particles rainModel) {
-        this.particleModel = rainModel;
-		rainModel.setMouseLocationProvider(this);
-        uiTimer = new Timer(5, e -> repaint());
-        calcTimer = new Timer(5, e -> rainModel.calcParticleLocations());
+    private class CalcThread extends Thread {
+        @Override
+        public void run() {
+            int cnt = 0;
+            long tstSum = 0;
+            while (true) {
+                long tst = System.currentTimeMillis();
+                particleModel.calcParticleLocations();
+                long cycleDuration = System.currentTimeMillis() - tst;
+                tstSum += cycleDuration;
+                if (cnt++ % 1000 == 0) {
+                    System.out.println(String.format("%d particles calculated in %.2f ms", particleModel.getParticleCount(), tstSum / 1000d));
+                    tstSum = 0;
+                }
+                
+                long cycleMillis = Math.max((int)(1000d/config.getCps()), 1);
+                if (cycleDuration < cycleMillis) {
+                    try {
+                        Thread.sleep(cycleMillis - cycleDuration);
+                    } catch (InterruptedException e) {
+                    }
+                }
+            }
+        }
+    }
+
+    public MainPanel(RainConfig config) {
+        this.config = config;
+        particleModel = new Particles(this);
+        uiTimer = new Timer(Math.max(1000/config.getFps(), 2), e -> repaint());
 
         addKeyListener(new KeyListener() {
 
@@ -45,30 +72,32 @@ public class MainPanel extends JComponent implements SpaceGeometryProvider {
             @Override
             public void keyTyped(KeyEvent e) {
                 if (e.getKeyChar() >= '0' && e.getKeyChar() <= '9') {
-                    rainModel.setIntensity(e.getKeyChar() - '0');
+                    particleModel.setIntensity(e.getKeyChar() - '0');
                 }
             }
 
         });
 
-		addMouseMotionListener(new MouseMotionListener() {
+        addMouseMotionListener(new MouseMotionListener() {
 
-			@Override
-			public void mouseDragged(MouseEvent e) {
-				
-			}
+            @Override
+            public void mouseDragged(MouseEvent e) {
 
-			@Override
-			public void mouseMoved(MouseEvent e) {
-				mouseLocation = e.getPoint();
-			}});
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                mouseLocation = e.getPoint();
+            }
+        });
 
         setFocusable(true);
         requestFocusInWindow();
         setVisible(true);
-        
-        calcTimer.start();
+
+        mouseLocation = new Point(getSize().width / 2, 10000);// , getSize().height/2);
         uiTimer.start();
+        new CalcThread().start();
     }
 
     void setAntiAliasing(Graphics2D g) {
@@ -77,30 +106,20 @@ public class MainPanel extends JComponent implements SpaceGeometryProvider {
 
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        if (mouseLocation == null) {
-         mouseLocation = new Point(getSize().width/2, 10000);//, getSize().height/2);
-        }
-        
+        // super.paintComponent(g);
+
         if (g instanceof Graphics2D) {
-            //setAntiAliasing((Graphics2D) g);
+            // setAntiAliasing((Graphics2D) g);
         }
 
-		g.setColor(Color.WHITE);//new Color((int)(shade*0.7), (int)(shade*0.9), shade));
-        particleModel.getParticles().forEach(p->p.paint(g));
+        g.setColor(Color.WHITE);// new Color((int)(shade*0.7), (int)(shade*0.9), shade));
+        particleModel.getParticles().forEach(p -> p.paint(g));
     }
 
-
-
-	@Override
-	public Point getMouseLocation() {
-		return mouseLocation == null ? new Point(100,200) : mouseLocation;
-	}
 
     @Override
     public Dimension getWindowDimensions() {
         return getSize();
     }
 
-    
 }

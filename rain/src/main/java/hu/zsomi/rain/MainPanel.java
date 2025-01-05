@@ -1,5 +1,6 @@
 package hu.zsomi.rain;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -13,21 +14,21 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.JComponent;
 import javax.swing.Timer;
 
-import hu.zsomi.rain.model.Rain;
-import hu.zsomi.rain.model.Raindrop;
+import hu.zsomi.rain.model.Particles;
 import hu.zsomi.rain.model.SpaceGeometryProvider;
 
-public class RainPanel extends JComponent implements SpaceGeometryProvider {
+public class MainPanel extends JComponent implements SpaceGeometryProvider {
 
     private Timer uiTimer;
-    private final Rain rainModel;
-    private int intensity = 8;
-	private Point mouseLocation = null;
+    private Timer calcTimer;
+    private final Particles particleModel;
+	private Point mouseLocation;
 
-    public RainPanel(Rain rainModel) {
-        this.rainModel = rainModel;
+    public MainPanel(Particles rainModel) {
+        this.particleModel = rainModel;
 		rainModel.setMouseLocationProvider(this);
-        this.uiTimer = new Timer(10, e -> repaint());
+        uiTimer = new Timer(5, e -> repaint());
+        calcTimer = new Timer(5, e -> rainModel.calcParticleLocations());
 
         addKeyListener(new KeyListener() {
 
@@ -44,7 +45,7 @@ public class RainPanel extends JComponent implements SpaceGeometryProvider {
             @Override
             public void keyTyped(KeyEvent e) {
                 if (e.getKeyChar() >= '0' && e.getKeyChar() <= '9') {
-                    intensity = e.getKeyChar() - '0';
+                    rainModel.setIntensity(e.getKeyChar() - '0');
                 }
             }
 
@@ -64,7 +65,9 @@ public class RainPanel extends JComponent implements SpaceGeometryProvider {
 
         setFocusable(true);
         requestFocusInWindow();
-
+        setVisible(true);
+        
+        calcTimer.start();
         uiTimer.start();
     }
 
@@ -80,27 +83,18 @@ public class RainPanel extends JComponent implements SpaceGeometryProvider {
         }
         
         if (g instanceof Graphics2D) {
-            setAntiAliasing((Graphics2D) g);
+            //setAntiAliasing((Graphics2D) g);
         }
 
-        for (Raindrop drop : rainModel.getRaindrops()) {
-            drop.paint(g);
-            drop.calcNextLocation();
-        }
-
-        rainModel.removeOldRaindrops();
-
-        for (int idx = 0; idx < intensity; idx++) {
-            rainModel.addRaindrop();
-        }
-
+		g.setColor(Color.WHITE);//new Color((int)(shade*0.7), (int)(shade*0.9), shade));
+        particleModel.getParticles().forEach(p->p.paint(g));
     }
 
 
 
 	@Override
 	public Point getMouseLocation() {
-		return mouseLocation;
+		return mouseLocation == null ? new Point(100,200) : mouseLocation;
 	}
 
     @Override

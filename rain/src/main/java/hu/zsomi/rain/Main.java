@@ -3,13 +3,14 @@ package hu.zsomi.rain;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
-import hu.zsomi.rain.model.Rain;
+import hu.zsomi.rain.model.Particles;
 
 public class Main {
 
@@ -19,6 +20,9 @@ public class Main {
 	public static double WIND_SPEED = 0;
 
     public static void main(String[] args) {
+		if (System.getProperty("os.name").toLowerCase().startsWith("linux")) {
+			Toolkit.getDefaultToolkit().sync();
+		}
         List<String> lst = new ArrayList<>();
         lst.add("wonderful");
         lst.add("nice");
@@ -27,8 +31,8 @@ public class Main {
         JFrame window = new JFrame("Rain shapes");
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		Rain rainModel = new Rain();
-		final JComponent rainArea = new RainPanel(rainModel);
+		Particles particleModel = new Particles();
+		final JComponent rainArea = new MainPanel(particleModel);
 		rainArea.setPreferredSize(new Dimension(SCREEN_WIDTH, 600));
 
 		window.getContentPane().add(rainArea, BorderLayout.CENTER);

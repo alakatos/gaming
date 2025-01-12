@@ -13,8 +13,9 @@
 		<module>follow-game</module>
 		<module>spinner</module>
 		<module>rain</module>
-    <module>gravity</module>
-    <module>speedtest</module>
+    	<module>gravity</module>
+    	<module>speedtest</module>
+		<module>lights</module>
 	</modules>
 
 	<dependencyManagement>

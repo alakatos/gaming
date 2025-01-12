@@ -1,5 +1,6 @@
 package hu.laki.gaming.geometry;
 
+import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -8,6 +9,10 @@ public class Vector2D {
 
 	private static final int DEFAULT_DECIMAL_PLACES_TO_ROUND_TO = 6;
 	private Point2D point;
+
+	public Vector2D() {
+		this.point = new Point(0, 0);
+	}
 
 	public Vector2D(Point2D toPoint) {
 		this.point = toPoint;
@@ -20,7 +25,7 @@ public class Vector2D {
 	public Vector2D(Point2D from, Point2D to) {
 		this(from.getX(), from.getY(), to.getX(), to.getY());
 	}
-	
+
 	public Vector2D(double x, double y) {
 		setTargetPoint(x, y);
 	}
@@ -32,7 +37,7 @@ public class Vector2D {
 	private final void setTargetPoint(double x, double y) {
 		point = new Point2D.Double(x, y);
 	}
-	
+
 	public Point2D getPoint() {
 		return point;
 	}
@@ -68,81 +73,80 @@ public class Vector2D {
 		if (extent < 0) {
 			throw new IllegalArgumentException("Scale extent should be non-negative");
 		}
-		return new Vector2D(getLength()*Math.abs(extent),0).rotate(getAngleGrad());
+		return new Vector2D(getPoint().getX()*extent, getPoint().getY()*extent);
 	}
-	
+
 	public Vector2D toLength(double newLength) {
 		if (newLength < 0) {
 			throw new IllegalArgumentException("New length should be non-negative");
 		}
 		return new Vector2D(newLength, 0).rotate(getAngleGrad());
 	}
-	
+
 	public Vector2D move(Point2D pt) {
 		return move(pt.getX(), pt.getY());
 	}
 
-	
 	public Vector2D move(double xOffs, double yOffs) {
-		return new Vector2D(point.getX()+xOffs, point.getY()+yOffs);
+		return new Vector2D(point.getX() + xOffs, point.getY() + yOffs);
 	}
-	
+
 	public Vector2D invert() {
-		return new Vector2D(-1*point.getX(), -1*point.getY());
+		return new Vector2D(-1 * point.getX(), -1 * point.getY());
 	}
 
 	public Point2D asPoint() {
 		return point;
 	}
-	
 
 	public Vector2D add(Vector2D vec2add) {
 		return new Vector2D(vec2add.move(point).point);
 	}
 
 	public Vector2D mirrorToAxisX() {
-		return new Vector2D(point.getX(), point.getY()*-1);
+		return new Vector2D(point.getX(), point.getY() * -1);
 	}
 
 	public Vector2D mirrorToAxisY() {
-		return new Vector2D(point.getX()*-1, point.getY());
+		return new Vector2D(point.getX() * -1, point.getY());
 	}
 
-	
 	@Override
 	public String toString() {
-		return Vector2D.class.getSimpleName() + "(" + round(point.getX(), 3) + ", "+ round(point.getY(), 3)+")";
+		return Vector2D.class.getSimpleName() + "(" + round(point.getX(), 3) + ", " + round(point.getY(), 3) + ")";
 	}
-	
+
 	private static double rad2Grad(double angleRad) {
-		return angleRad/(2*Math.PI)*360;
+		return angleRad / (2 * Math.PI) * 360;
 	}
+
 	private static double grad2Rad(double angleGrad) {
-		return angleGrad/360 * 2*Math.PI;
+		return angleGrad / 360 * 2 * Math.PI;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Vector2D) {
 			Vector2D otherVec = (Vector2D) obj;
 			return round(getPoint().getX()) == round(otherVec.getPoint().getX()) &&
-				   round(getPoint().getY()) == round(otherVec.getPoint().getY());
+					round(getPoint().getY()) == round(otherVec.getPoint().getY());
 		}
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return (round(point.getX())+""+round(point.getY())).hashCode();
+		return (round(point.getX()) + "" + round(point.getY())).hashCode();
 	}
-	
+
 	private static double round(double value) {
 		return round(value, DEFAULT_DECIMAL_PLACES_TO_ROUND_TO);
 	}
+
 	private static double round(double value, int toDecimalPlaces) {
-	    BigDecimal bd = BigDecimal.valueOf(value);
-	    bd = bd.setScale(toDecimalPlaces, RoundingMode.HALF_UP);
-	    return bd.doubleValue();
+		BigDecimal bd = BigDecimal.valueOf(value);
+		bd = bd.setScale(toDecimalPlaces, RoundingMode.HALF_UP);
+		return bd.doubleValue();
 	}
 
 }
